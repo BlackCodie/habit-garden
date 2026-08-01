@@ -276,8 +276,8 @@ main{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:
 nav.tabbar{
   position:fixed;left:50%;transform:translateX(-50%);
   bottom:calc(var(--safe-b) + 12px);z-index:50;
-  display:flex;gap:2px;padding:7px;border-radius:var(--r-pill);
-  width:min(430px,calc(100vw - 28px));
+  display:flex;gap:1px;padding:6px;border-radius:var(--r-pill);
+  width:min(468px,calc(100vw - 20px));
   background:var(--glass);-webkit-backdrop-filter:blur(34px) saturate(200%);backdrop-filter:blur(34px) saturate(200%);
   border:1px solid var(--glass-stroke-2);
   box-shadow:var(--shadow-2),inset 0 1px 0 var(--glass-hi),inset 0 -1px 2px rgba(255,255,255,.25);
@@ -285,10 +285,12 @@ nav.tabbar{
 nav.tabbar::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
   background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,0) 42%,rgba(255,255,255,.32));
   mix-blend-mode:overlay}
-.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px 6px;
+.tab{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 1px 6px;
   border-radius:var(--r-pill);position:relative;z-index:1;transition:transform .34s var(--spring)}
-.tab .ic{font-size:20px;line-height:1;transition:transform .4s var(--spring),filter .3s}
-.tab .tx{font-size:9.5px;font-weight:800;letter-spacing:.1px;color:var(--ink-3);transition:color .3s}
+.tab .ic{font-size:19px;line-height:1;transition:transform .4s var(--spring),filter .3s}
+.tab .tx{font-size:8.8px;font-weight:800;letter-spacing:0;color:var(--ink-3);transition:color .3s;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+@media (min-width:400px){.tab .tx{font-size:9.5px}.tab .ic{font-size:20px}}
 .tab:active{transform:scale(.9)}
 .tab.on .ic{transform:translateY(-1px) scale(1.16)}
 .tab.on .tx{color:#fff}
@@ -392,6 +394,9 @@ textarea.input{resize:none;min-height:120px;line-height:1.5;font-weight:500}
 [data-theme="twilight"] .pot-stage .sky{background:linear-gradient(180deg,rgba(90,40,120,.5),rgba(40,20,60,.3))}
 .pot-stage .sun{position:absolute;top:16px;right:20px;font-size:26px;z-index:1;animation:bob 5s ease-in-out infinite}
 .plant-svg{position:relative;z-index:2;width:100%;max-width:250px;height:230px;display:block}
+/* the small preview on the Today screen keeps its own compact size */
+.peek-plant{width:92px;flex:0 0 auto;margin:-6px 0}
+.peek-plant .plant-svg{height:96px;max-width:92px}
 .tap-hint{position:relative;z-index:2;font-size:12.5px;font-weight:800;color:var(--ink-2);
   padding:7px 14px;border-radius:var(--r-pill);background:rgba(255,255,255,.55);margin-top:2px;
   border:1px solid var(--glass-stroke-2);animation:pulse 2.4s ease-in-out infinite}
@@ -446,10 +451,14 @@ textarea.input{resize:none;min-height:120px;line-height:1.5;font-weight:500}
 .goal.done{opacity:.72}
 
 /* ---------- notes ---------- */
-.notes{columns:2;column-gap:12px}
-@media (max-width:400px){.notes{columns:1}}
-.note{break-inside:avoid;margin-bottom:12px;padding:15px;border-radius:var(--r-md);position:relative;
-  transition:transform .3s var(--spring);display:inline-block;width:100%}
+/* real masonry: JS deals the notes into columns, so nothing can be dropped
+   (CSS `columns` + inline-block loses cards in Safari) */
+.notes{display:grid;gap:12px;align-items:start}
+.notes-col{display:flex;flex-direction:column;gap:12px;min-width:0}
+.note{padding:15px;border-radius:var(--r-md);position:relative;width:100%;
+  transition:transform .3s var(--spring);animation:noteIn .45s var(--spring) backwards;
+  animation-delay:calc(var(--i,0) * 45ms)}
+@keyframes noteIn{from{opacity:0;transform:translateY(14px) scale(.94)}to{opacity:1;transform:none}}
 .note:active{transform:scale(.97)}
 .note h5{font-size:14.5px;font-weight:850;margin-bottom:6px;letter-spacing:-.2px}
 .note p{font-size:13px;line-height:1.5;color:var(--ink-2);white-space:pre-wrap;word-break:break-word}
@@ -510,6 +519,127 @@ textarea.input{resize:none;min-height:120px;line-height:1.5;font-weight:500}
 .sw.on{background:var(--grad-main)}
 .sw.on i{transform:translateX(20px)}
 
+/* ---------- weather ---------- */
+.wx{padding:16px 18px}
+.wx-ic{font-size:40px;line-height:1;flex:0 0 auto;animation:bob 5s ease-in-out infinite}
+.wx-t{font-size:34px;font-weight:850;letter-spacing:-1.5px;line-height:1.05;
+  background:var(--grad-main);-webkit-background-clip:text;background-clip:text;color:transparent}
+.wx-t span{font-size:22px}
+.wx-hl{display:flex;flex-direction:column;gap:3px;text-align:right;font-size:12px;font-weight:800;color:var(--ink-3)}
+.wx-note{margin-top:12px;padding-top:12px;border-top:1px solid rgba(155,92,246,.14);
+  font-size:13px;font-weight:650;color:var(--ink-2)}
+.wx-ask{padding:15px 18px}
+
+/* ---------- daily ideas (breakfast + hair) ---------- */
+.idea{padding:16px 17px;position:relative;overflow:hidden;
+  animation:screenIn .5s var(--ease) backwards;animation-delay:.06s}
+.idea-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.idea-tag{font-size:10.5px;font-weight:850;letter-spacing:.4px;color:var(--ink-3);text-transform:uppercase}
+.idea-time{font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:var(--r-pill);
+  background:rgba(255,255,255,.5);color:var(--ink-2)}
+[data-theme="twilight"] .idea-time{background:rgba(255,255,255,.12)}
+.idea-emo{font-size:38px;line-height:1;margin-bottom:8px;display:inline-block;
+  animation:bob 4.5s ease-in-out infinite}
+.idea h4{font-size:17px;font-weight:850;letter-spacing:-.3px;margin-bottom:5px}
+.idea p{font-size:12.5px;line-height:1.5}
+.idea-go{display:inline-block;margin-top:11px;font-size:12px;font-weight:800;color:var(--pink-500)}
+[data-theme="twilight"] .idea-go{color:var(--pink-300)}
+.idea::after{content:"";position:absolute;right:-30px;top:-30px;width:110px;height:110px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.5),transparent 70%);pointer-events:none}
+.reci{padding-left:20px;display:flex;flex-direction:column;gap:8px}
+.reci li{font-size:14px;line-height:1.5;color:var(--ink-2);list-style:disc}
+.reci.steps-n li{list-style:decimal;font-weight:550}
+.reci li::marker{color:var(--pink-500);font-weight:800}
+
+/* ---------- garden: sun rays, visitors, watering can ---------- */
+.rays{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.5;
+  background:conic-gradient(from 200deg at 82% 12%,transparent 0deg,rgba(255,240,190,.55) 12deg,
+    transparent 24deg,transparent 36deg,rgba(255,240,190,.4) 48deg,transparent 60deg);
+  animation:rays 14s ease-in-out infinite}
+@keyframes rays{0%,100%{opacity:.32;transform:rotate(0)}50%{opacity:.6;transform:rotate(4deg)}}
+.bug-layer{position:absolute;inset:0;z-index:4;pointer-events:none}
+.bug{position:absolute;pointer-events:auto;cursor:pointer;will-change:transform;
+  animation-iteration-count:infinite;animation-timing-function:ease-in-out;
+  filter:drop-shadow(0 2px 3px rgba(120,60,140,.25))}
+.bug:active{transform:scale(1.4)}
+.bug.away{animation:bugAway .9s ease-out forwards}
+@keyframes bugAway{to{opacity:0;transform:translate(40px,-90px) scale(.4) rotate(50deg)}}
+.bug-flit1{animation-name:flit1}.bug-flit2{animation-name:flit2}.bug-flit3{animation-name:flit3}
+.bug-crawl{animation-name:crawl}
+@keyframes flit1{0%,100%{transform:translate(0,0) rotate(-6deg)}25%{transform:translate(46px,-26px) rotate(10deg)}
+  50%{transform:translate(84px,10px) rotate(-8deg)}75%{transform:translate(34px,30px) rotate(8deg)}}
+@keyframes flit2{0%,100%{transform:translate(0,0) rotate(5deg)}30%{transform:translate(-52px,22px) rotate(-12deg)}
+  60%{transform:translate(-20px,-34px) rotate(9deg)}}
+@keyframes flit3{0%,100%{transform:translate(0,0) scale(1)}20%{transform:translate(28px,-40px) scale(1.12)}
+  45%{transform:translate(-30px,-16px) scale(.9)}70%{transform:translate(18px,24px) scale(1.06)}}
+@keyframes crawl{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(56px,-4px) rotate(3deg)}}
+
+.water-station{display:flex;align-items:center;gap:12px;padding:13px 15px;margin-top:14px}
+.tap-post{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:9px 13px;border-radius:var(--r-md);flex:0 0 auto;
+  background:rgba(255,255,255,.5);border:1px solid var(--glass-stroke-2);
+  box-shadow:var(--shadow-1),inset 0 1px 0 var(--glass-hi);transition:transform .3s var(--spring)}
+[data-theme="twilight"] .tap-post{background:rgba(255,255,255,.09)}
+.tap-post .spout{font-size:23px;line-height:1}
+.tap-post .lbl{font-size:9.5px;font-weight:850;letter-spacing:.2px;color:var(--ink-2);white-space:nowrap}
+.tap-post:active{transform:scale(.92)}
+.tap-post.off{opacity:.55}
+.tap-post .stream{position:absolute;left:50%;top:38px;width:5px;height:0;border-radius:3px;
+  background:linear-gradient(180deg,#9FE3FF,#5EC8F5);transform:translateX(-50%);opacity:0}
+.tap-post.running .stream{animation:stream 1.4s linear}
+@keyframes stream{0%{height:0;opacity:0}12%{height:34px;opacity:.95}88%{height:34px;opacity:.95}100%{height:0;opacity:0}}
+.can-holder{width:80px;flex:0 0 auto;transition:transform .5s var(--spring)}
+.can-holder.full{animation:bob 3.4s ease-in-out infinite}
+.can-holder.shake{animation:shake .5s}
+@keyframes shake{0%,100%{transform:translateX(0) rotate(0)}20%{transform:translateX(-6px) rotate(-6deg)}
+  40%{transform:translateX(6px) rotate(6deg)}60%{transform:translateX(-4px) rotate(-4deg)}80%{transform:translateX(4px) rotate(3deg)}}
+.can-holder.pour{animation:pourTilt 1.2s var(--ease)}
+@keyframes pourTilt{0%{transform:rotate(0)}25%{transform:rotate(-42deg) translate(6px,-6px)}
+  75%{transform:rotate(-42deg) translate(6px,-6px)}100%{transform:rotate(0)}}
+.can-svg{width:100%;display:block;filter:drop-shadow(0 4px 8px rgba(180,90,160,.28))}
+.water-copy{flex:1;min-width:0}
+
+/* ---------- pets ---------- */
+.pets-top{padding:18px}
+.pets-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.pet-card{padding:14px 12px 12px;text-align:center;border-radius:var(--r-lg);
+  animation:noteIn .5s var(--spring) backwards;animation-delay:calc(var(--i,0) * 55ms)}
+.pet-art{width:78px;margin:0 auto 8px;cursor:pointer;transition:transform .3s var(--spring);
+  filter:drop-shadow(0 6px 9px rgba(120,40,140,.26))}
+.pet-art:active{transform:scale(.9)}
+.pet-art.bounce{animation:petHop .85s var(--spring)}
+@keyframes petHop{0%,100%{transform:translateY(0) rotate(0) scale(1)}
+  22%{transform:translateY(-20px) rotate(-9deg) scale(1.08)}
+  48%{transform:translateY(0) rotate(6deg) scale(.97)}
+  70%{transform:translateY(-8px) rotate(-4deg) scale(1.03)}}
+.pet-name{font-size:15px;font-weight:850;letter-spacing:-.2px}
+.pet-kind{font-size:11px;font-weight:700;color:var(--ink-3);margin-top:1px}
+.pet-bar{height:8px;border-radius:var(--r-pill);background:rgba(155,92,246,.15);margin:9px 4px 6px;
+  overflow:hidden;border:1px solid var(--glass-stroke-2)}
+.pet-bar i{display:block;height:100%;border-radius:var(--r-pill);background:var(--grad-main);
+  transition:width .8s var(--spring);box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+.pet-mood{display:flex;align-items:center;justify-content:center;gap:5px;font-size:11px;font-weight:800;color:var(--ink-2)}
+.pet-mood span:first-child{font-size:14px}
+.pet-feed{margin-top:10px;width:100%;padding:8px 6px;border-radius:var(--r-pill);
+  font-size:11px;font-weight:850;color:var(--ink-2);
+  background:rgba(255,255,255,.5);border:1px solid var(--glass-stroke-2);
+  transition:transform .3s var(--spring)}
+[data-theme="twilight"] .pet-feed{background:rgba(255,255,255,.10)}
+.pet-feed:active{transform:scale(.93)}
+.pet-feed.done{opacity:.55}
+
+/* ---------- entrance stagger for lists ---------- */
+.habit,.goal,.seed{animation:noteIn .45s var(--spring) backwards;animation-delay:calc(var(--i,0) * 45ms)}
+.pbar i,.hp .fill,.pet-bar i{position:relative;overflow:hidden}
+.pbar i::after,.hp .fill::after{content:"";position:absolute;inset:0;border-radius:inherit;
+  background:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.55) 50%,transparent 80%);
+  animation:shimmer 2.8s ease-in-out infinite}
+@keyframes shimmer{0%{transform:translateX(-100%)}55%,100%{transform:translateX(220%)}}
+.bubu-svg:active{transform:scale(.9) rotate(-6deg)}
+.bubu-card.wiggle .bubu-svg{animation:wiggle .7s var(--spring)}
+@keyframes wiggle{0%,100%{transform:rotate(0)}20%{transform:rotate(-11deg) scale(1.07)}
+  50%{transform:rotate(9deg) scale(1.04)}75%{transform:rotate(-5deg)}}
+
 /* ---------- iPad / large ---------- */
 @media (min-width:768px){
   :root{--tabbar-h:80px}
@@ -522,18 +652,23 @@ textarea.input{resize:none;min-height:120px;line-height:1.5;font-weight:500}
   .habits-grid .habit{margin-bottom:0}
   .goals-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   .goals-grid .goal{margin-bottom:0}
-  .notes{columns:3}
-  nav.tabbar{width:min(500px,calc(100vw - 40px));bottom:calc(var(--safe-b) + 18px)}
+  nav.tabbar{width:min(560px,calc(100vw - 40px));bottom:calc(var(--safe-b) + 18px);gap:2px;padding:7px}
   .tab .tx{font-size:10.5px}
   .tab .ic{font-size:22px}
-  #catFloat{width:76px}
   .pot-stage{min-height:360px}
   .plant-svg{height:290px;max-width:320px}
+  .peek-plant{width:110px}
+  .peek-plant .plant-svg{height:112px;max-width:110px}
+  .pets-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+  .pet-art{width:92px}
+  .water-station{gap:18px;padding:16px 20px}
+  .can-holder{width:100px}
+  .idea-emo{font-size:44px}
 }
 @media (min-width:1100px){
   .wrap{max-width:1000px}
-  .notes{columns:4}
   .seedgrid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
+  .pets-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;
@@ -564,6 +699,7 @@ textarea.input{resize:none;min-height:120px;line-height:1.5;font-weight:500}
     <section class="screen on" id="sc-today"></section>
     <section class="screen" id="sc-habits"></section>
     <section class="screen" id="sc-garden"></section>
+    <section class="screen" id="sc-pets"></section>
     <section class="screen" id="sc-goals"></section>
     <section class="screen" id="sc-notes"></section>
   </main>
@@ -576,6 +712,7 @@ textarea.input{resize:none;min-height:120px;line-height:1.5;font-weight:500}
   <button class="tab on" data-tab="today"><span class="ic">🏡</span><span class="tx">Today</span></button>
   <button class="tab" data-tab="habits"><span class="ic">🌸</span><span class="tx">Habits</span></button>
   <button class="tab" data-tab="garden"><span class="ic">🌱</span><span class="tx">Garden</span></button>
+  <button class="tab" data-tab="pets"><span class="ic">🐾</span><span class="tx">Pets</span></button>
   <button class="tab" data-tab="goals"><span class="ic">🎯</span><span class="tx">Goals</span></button>
   <button class="tab" data-tab="notes"><span class="ic">💌</span><span class="tx">Notes</span></button>
 </nav>
@@ -694,9 +831,219 @@ const CHEERS = [
 
 const PLANT_FIRST_MSG = `We grow day by day, just as plants do. 🌱`;
 
+/* ---- a different breakfast every day ---- */
+const BREAKFASTS = [
+  { e:'🥞', n:'Fluffy Pancake Stack', t:'15 min', i:['1 cup flour','1 egg','¾ cup milk','1 tbsp sugar','1 tsp baking powder','butter + berries'],
+    s:['Whisk the dry things, then the wet, and stop mixing while it\'s still a little lumpy.','Rest the batter 5 minutes — this is the fluffy secret.','Cook on medium butter until bubbles pop on top, then flip once.','Stack, butter, berries, syrup.'] },
+  { e:'🍓', n:'Strawberry Yogurt Bowl', t:'5 min', i:['Greek yogurt','strawberries','honey','granola','a few mint leaves'],
+    s:['Spoon the yogurt into your prettiest bowl.','Slice the strawberries thin so they fan out.','Granola on one side, honey zig-zagged over everything.','Mint on top so it looks like a café made it.'] },
+  { e:'🥑', n:'Avocado Toast, Properly', t:'8 min', i:['thick sourdough','1 ripe avocado','lemon','chilli flakes','flaky salt','an egg if you like'],
+    s:['Toast the bread darker than feels right — it should crunch.','Mash the avocado with lemon, salt and pepper, keep it chunky.','Pile it on, chilli flakes over the top.','A soft egg on top turns it into a real meal.'] },
+  { e:'🥣', n:'Overnight Oats (made last night)', t:'2 min + sleep', i:['½ cup oats','½ cup milk','2 tbsp yogurt','1 tsp maple syrup','fruit'],
+    s:['Stir everything in a jar before bed.','Sleep. The oats do the work.','In the morning, top with fruit and eat it straight from the jar.'] },
+  { e:'🍳', n:'Soft Scrambled Eggs', t:'7 min', i:['3 eggs','knob of butter','splash of cream','chives','toast'],
+    s:['Low heat. Lower than that.','Stir constantly with a spatula, pulling the curds in from the edges.','Take them off while still glossy — they finish cooking in the pan.','Chives, pepper, buttered toast.'] },
+  { e:'🧇', n:'Crispy Waffles', t:'20 min', i:['1 cup flour','1 egg (separated)','¾ cup buttermilk','2 tbsp melted butter','1 tsp sugar'],
+    s:['Whip the egg white to soft peaks and fold it in last — that\'s the crisp.','Batter into a hot waffle iron, don\'t peek early.','Butter, syrup, or strawberries and cream.'] },
+  { e:'🥐', n:'Croissant & Jam Morning', t:'6 min', i:['croissants','good butter','strawberry jam','coffee'],
+    s:['Warm the croissants 4 minutes so the layers wake up.','Split, butter while hot, then jam.','No plate needed. Crumbs are part of it.'] },
+  { e:'🍌', n:'Banana Bread French Toast', t:'12 min', i:['2 thick slices banana bread','1 egg','splash of milk','cinnamon','butter'],
+    s:['Beat the egg with milk and cinnamon.','Dip each slice quickly — banana bread soaks fast.','Fry in butter until caramelised on both sides.','Cream or a dusting of sugar.'] },
+  { e:'🫐', n:'Blueberry Smoothie Bowl', t:'6 min', i:['1 frozen banana','1 cup frozen blueberries','¼ cup milk','1 tbsp nut butter','toppings'],
+    s:['Blend with as little milk as you can get away with — thick is the point.','Pour into a cold bowl.','Coconut, granola, extra berries in neat little rows.'] },
+  { e:'🥯', n:'Bagel with Cream Cheese', t:'6 min', i:['bagel','cream cheese','cucumber','dill','lemon','black pepper'],
+    s:['Toast the bagel cut-side down until golden.','Cream cheese thicker than you think you need.','Cucumber ribbons, dill, a squeeze of lemon, lots of pepper.'] },
+  { e:'🥧', n:'Baked Oats (cake for breakfast)', t:'30 min', i:['1 cup oats','1 banana','1 egg','½ cup milk','1 tsp baking powder','chocolate chips'],
+    s:['Blend everything except the chips.','Pour into a small dish, scatter the chips.','Bake 25 min at 180°C until it springs back.','It tastes like cake and it is not. Mostly.'] },
+  { e:'🧀', n:'Cheesy Egg Wrap', t:'8 min', i:['tortilla','2 eggs','grated cheese','spinach','hot sauce'],
+    s:['Scramble the eggs softly, fold the spinach in at the end.','Cheese onto the warm tortilla so it melts.','Eggs on top, roll it tight, sear the seam in the pan.','Hot sauce. Always.'] },
+  { e:'🍯', n:'Honey Ricotta Toast', t:'6 min', i:['sourdough','ricotta','honey','pistachios','lemon zest'],
+    s:['Toast, then spread the ricotta thick and rough.','Honey over the top in a spiral.','Crushed pistachios and lemon zest.'] },
+  { e:'🥭', n:'Mango Lassi & Toast', t:'5 min', i:['1 mango','1 cup yogurt','½ cup milk','honey','cardamom'],
+    s:['Blend the mango, yogurt, milk and honey until silky.','A tiny pinch of cardamom — trust it.','Serve very cold with buttered toast.'] },
+  { e:'🍫', n:'Chocolate Chip Pancakes', t:'15 min', i:['pancake batter','dark chocolate chips','banana','butter'],
+    s:['Ladle the batter, then drop the chips on while the top is wet.','Flip once, chips go on the bottom and caramelise.','Sliced banana and a little more chocolate.'] },
+  { e:'🥞', n:'Lemon Sugar Crêpes', t:'18 min', i:['1 cup flour','2 eggs','1¼ cup milk','butter','lemons','caster sugar'],
+    s:['Blend the batter and let it rest 20 min if you can.','Thin layer in a hot pan, swirl, 40 seconds a side.','Sugar, then a hard squeeze of lemon, then roll.'] },
+  { e:'🍅', n:'Tomatoes on Toast', t:'8 min', i:['ripe tomatoes','sourdough','garlic clove','olive oil','salt'],
+    s:['Toast the bread and rub it with the raw garlic while hot.','Grate the tomatoes on a box grater, keep the juice.','Spoon over, good olive oil, flaky salt. That\'s the whole thing.'] },
+  { e:'🥥', n:'Coconut Chia Pudding', t:'5 min + fridge', i:['3 tbsp chia seeds','1 cup coconut milk','1 tsp maple','mango','lime'],
+    s:['Stir the chia into the coconut milk, wait 5 min, stir again (this stops the clumps).','Fridge overnight.','Mango on top and a scrape of lime zest.'] },
+  { e:'🥔', n:'Crispy Potato Rösti & Egg', t:'20 min', i:['2 potatoes','1 egg','butter','salt','sour cream','chives'],
+    s:['Grate the potato and squeeze out the water — squeeze harder.','Press into a buttered pan, medium heat, do not touch it for 8 minutes.','Flip, crisp the other side.','Fried egg on top, sour cream, chives.'] },
+  { e:'🍎', n:'Cinnamon Apple Porridge', t:'12 min', i:['½ cup oats','1 cup milk','1 apple','cinnamon','brown sugar','butter'],
+    s:['Simmer the oats in milk, stirring, until creamy.','Meanwhile fry the diced apple in butter, sugar and cinnamon until soft.','Spoon the apples over the top with all the buttery syrup.'] },
+  { e:'🌯', n:'Breakfast Burrito', t:'15 min', i:['tortilla','2 eggs','beans','cheese','avocado','salsa'],
+    s:['Scramble the eggs, warm the beans.','Layer down the middle: beans, eggs, cheese, avocado, salsa.','Fold the sides in first, then roll tight.','Toast the whole thing seam-down in a dry pan.'] },
+  { e:'🍞', n:'Cinnamon Sugar Toast', t:'5 min', i:['thick white bread','butter','sugar','cinnamon'],
+    s:['Butter the bread right to the edges.','Mix sugar and cinnamon, spoon it on generously.','Under the grill for 2 minutes until it bubbles.','This is the one from childhood.'] },
+  { e:'🥛', n:'Matcha Latte & Almond Toast', t:'7 min', i:['1 tsp matcha','hot water','oat milk','honey','almond butter','bread'],
+    s:['Whisk the matcha with a little hot water until no lumps remain.','Steamed oat milk over it, honey to taste.','Toast with almond butter and banana coins.'] },
+  { e:'🧁', n:'Blueberry Muffin Mug Cake', t:'4 min', i:['4 tbsp flour','2 tbsp sugar','¼ tsp baking powder','3 tbsp milk','1 tbsp oil','blueberries'],
+    s:['Stir everything in a big mug with a fork.','Blueberries pushed in last.','Microwave 90 seconds. Eat with a spoon, straight from the mug.'] },
+  { e:'🍠', n:'Sweet Potato & Feta Hash', t:'22 min', i:['1 sweet potato','red onion','feta','egg','paprika','olive oil'],
+    s:['Dice the sweet potato small so it cooks fast.','Fry hard with the onion and paprika until the edges catch.','Crumble the feta over, crack the egg in, lid on for 3 min.'] },
+  { e:'☕', n:'Slow Coffee & Toast Soldiers', t:'10 min', i:['good coffee','soft-boiled eggs','buttered toast','salt'],
+    s:['Eggs into already-boiling water for exactly 6 minutes.','Cut the toast into long fingers and butter them.','Crack the tops off, salt, dip. No rushing this one.'] },
+  { e:'🥨', n:'Ham & Cheese Croissant Bake', t:'25 min', i:['2 croissants','ham','gruyère','1 egg','splash of cream','mustard'],
+    s:['Split the croissants and fill with mustard, ham and cheese.','Beat egg with cream and pour over.','Bake 15 min at 180°C until puffed and golden.'] },
+  { e:'🍑', n:'Peaches & Cream Oatmeal', t:'12 min', i:['½ cup oats','1 cup milk','1 peach','cream','brown sugar','vanilla'],
+    s:['Cook the oats with a drop of vanilla.','Slice the peach and caramelise in a dry hot pan, 2 min a side.','Oats in the bowl, peaches on top, cold cream poured around the edge.'] },
+  { e:'🥗', n:'Green Morning Smoothie', t:'5 min', i:['handful spinach','1 banana','½ apple','1 cup milk','1 tbsp oats','honey'],
+    s:['Spinach and liquid first — always blend the greens smooth before adding the rest.','Everything else in, blend until there\'s nothing left to chew.','It tastes like apple, not spinach. Promise.'] },
+  { e:'🫓', n:'Shakshuka for One', t:'18 min', i:['1 tin tomatoes','½ onion','garlic','cumin','paprika','2 eggs','bread'],
+    s:['Soften the onion and garlic, then the spices for 30 seconds until fragrant.','Tomatoes in, simmer 8 min until thick, not watery.','Make two wells, crack the eggs in, lid on 4 min.','Bread for scooping, no cutlery.'] }
+];
+
+/* ---- a different hairstyle every day ---- */
+const HAIRSTYLES = [
+  { e:'🎀', n:'Half-up Bow',        d:'Take the top third back, tie it, and finish with a big ribbon.', t:'3 min' },
+  { e:'🌸', n:'Messy Bun',          d:'Twist into a bun and pull a few pieces loose around your face on purpose.', t:'2 min' },
+  { e:'✨', n:'Loose Beach Waves',  d:'Big barrel curls, alternate directions, then break them up with your fingers.', t:'15 min' },
+  { e:'💫', n:'Dutch Braid Crown',  d:'Braid from one temple around the back and pin it behind the other ear.', t:'12 min' },
+  { e:'🌙', n:'Sleek Low Pony',     d:'Middle part, brushed flat and shiny, tied at the nape. Wrap a strand over the elastic.', t:'5 min' },
+  { e:'🩰', n:'Ballet Bun',         d:'High and smooth with a little net or a ribbon wrapped around the base.', t:'8 min' },
+  { e:'🦋', n:'Claw Clip Twist',    d:'Twist it all up and clip. The whole look is one accessory doing the work.', t:'1 min' },
+  { e:'🌷', n:'Two Dutch Braids',   d:'Split down the middle, braid tight, and tug the edges wide when you\'re done.', t:'14 min' },
+  { e:'💗', n:'Space Buns',         d:'Two high buns, a little uneven on purpose, wispy bits left down.', t:'6 min' },
+  { e:'🕊️', n:'Bubble Ponytail',    d:'Ponytail, then elastics every few inches and puff each section out.', t:'7 min' },
+  { e:'🌊', n:'Deep Side Part',     d:'Move your part far to one side and let the heavy side fall over one eye.', t:'2 min' },
+  { e:'🧸', n:'Bouncy Blowout',     d:'Round brush, roots lifted, ends curled under. Cold shot at the end to set it.', t:'20 min' },
+  { e:'🌼', n:'Braided Headband',   d:'One small braid from ear to ear across the crown, pinned underneath.', t:'8 min' },
+  { e:'⭐', n:'High Slick Pony',     d:'Very high, very tight, gel at the edges. Instantly makes everything look intentional.', t:'6 min' },
+  { e:'🍒', n:'Twin Twisted Pigtails', d:'Two low pigtails, each twisted along its length and tied at the bottom.', t:'5 min' },
+  { e:'🫧', n:'Air-dried Natural',  d:'A little cream in damp hair, scrunch, then genuinely do not touch it again.', t:'1 min' },
+  { e:'🪞', n:'Fishtail Braid',     d:'Two sections, cross small pieces over from the outside. Loosen it at the end.', t:'12 min' },
+  { e:'💜', n:'Front Face Curls',   d:'Straight everywhere else, just the two front pieces curled away from your face.', t:'6 min' },
+  { e:'🌺', n:'Flower Pins',        d:'Any simple updo plus three small flower clips scattered off-centre.', t:'4 min' },
+  { e:'🍓', n:'Low Twisted Chignon',d:'Two twists at the nape, wrapped around each other and pinned.', t:'7 min' },
+  { e:'🌈', n:'Crimped Waves',      d:'Braid damp hair into several plaits, sleep on it, undo in the morning.', t:'overnight' },
+  { e:'🎐', n:'Ribbon Wrapped Pony',d:'Long thin ribbon wound down the length of a low ponytail and tied at the end.', t:'6 min' },
+  { e:'🦢', n:'Straight & Glossy',  d:'Flat iron in small sections, then a drop of oil through the ends only.', t:'18 min' },
+  { e:'🌻', n:'Top Knot',           d:'Everything up high, twisted once, secured. Comfiest good-hair-day there is.', t:'2 min' },
+  { e:'🧁', n:'Curtain Bangs Look', d:'Blow the front pieces back and away with a round brush so they frame your face.', t:'8 min' },
+  { e:'🪷', n:'Braided Low Pony',   d:'Loose braid starting at the ponytail, then pull it apart to look thicker.', t:'6 min' },
+  { e:'❄️', n:'Half-up Space Buns', d:'Two tiny buns on top, the rest left long and wavy underneath.', t:'5 min' },
+  { e:'🍦', n:'Rolled Tuck Under',  d:'Roll the ends of a low pony up and under, pin it. Looks like an expensive bob.', t:'8 min' },
+  { e:'🎧', n:'Sporty Double Dutch',d:'Two tight Dutch braids that survive an entire day without touching them.', t:'16 min' },
+  { e:'💎', n:'Pearl Pin Placement',d:'Anything simple plus a handful of pearl bobby pins in a diagonal line.', t:'3 min' }
+];
+
+/* ---- weather (WMO codes → something cute) ---- */
+const WMO = {
+  0:['☀️','Clear and bright'], 1:['🌤️','Mostly sunny'], 2:['⛅','Partly cloudy'], 3:['☁️','Overcast'],
+  45:['🌫️','Foggy'], 48:['🌫️','Icy fog'],
+  51:['🌦️','Light drizzle'], 53:['🌦️','Drizzle'], 55:['🌧️','Heavy drizzle'],
+  56:['🌧️','Freezing drizzle'], 57:['🌧️','Freezing drizzle'],
+  61:['🌧️','Light rain'], 63:['🌧️','Rain'], 65:['🌧️','Heavy rain'],
+  66:['🌧️','Freezing rain'], 67:['🌧️','Freezing rain'],
+  71:['🌨️','Light snow'], 73:['🌨️','Snow'], 75:['❄️','Heavy snow'], 77:['🌨️','Snow grains'],
+  80:['🌦️','Showers'], 81:['🌦️','Showers'], 82:['⛈️','Heavy showers'],
+  85:['🌨️','Snow showers'], 86:['🌨️','Snow showers'],
+  95:['⛈️','Thunderstorm'], 96:['⛈️','Storm with hail'], 99:['⛈️','Storm with hail']
+};
+function weatherNote(code, temp) {
+  if ([95,96,99].includes(code)) return `Storm outside — perfect blanket day, ${NAME}.`;
+  if ([71,73,75,77,85,86].includes(code)) return `Snow! Wrap up warm, ${NAME} ❄️`;
+  if (code >= 51 && code <= 82) return `Take an umbrella, ${NAME} ☔`;
+  if (temp >= 27) return `Hot one today — drink extra water, ${NAME}.`;
+  if (temp <= 5) return `Freezing out there. Scarf weather, ${NAME} 🧣`;
+  if (code === 0 || code === 1) return `Beautiful out — go get some sun, ${NAME} 🌞`;
+  return `A soft grey day. Cosy up, ${NAME} 💗`;
+}
+
+/* ---- little garden visitors ---- */
+const CRITTERS = [
+  { e:'🦋', n:'butterfly', s:'flutter' }, { e:'🐝', n:'bee',       s:'buzz'    },
+  { e:'🐞', n:'ladybug',   s:'flutter' }, { e:'🐛', n:'caterpillar',s:'crawl'  },
+  { e:'🐌', n:'snail',     s:'crawl'   }, { e:'✨', n:'firefly',   s:'twinkle' },
+  { e:'🐦', n:'little bird',s:'chirp'  }, { e:'🌼', n:'petal',     s:'flutter' }
+];
+const CRITTER_LINES = [
+  'the butterfly says hi 🦋','a bee stopped by to help 🐝','she landed on your finger!',
+  'off it goes… 💨','it likes your garden, '+NAME,'a tiny visitor 💗','it did a little loop!'
+];
+
 const WATER_LINES = [
   'Glug glug… thank you! 💧','So refreshing! 🫧','*happy plant noises* 🌿',
   'You remembered me! 💚','Ahh, perfect. 💦','I grew a little! 🌱'
+];
+
+/* ============================================================
+   PETS — pixel friends. O outline · W body · S secondary
+   E eye · N nose · M mouth · B blush · A accent
+   ============================================================ */
+const PETS = [
+  { id:'cat', name:'Mochi', kind:'Kitten', emoji:'🐱', voice:'meow', treat:'🐟',
+    pal:{O:'#5E2B57',W:'#FFF4FA',S:'#FFAFD6',E:'#3E1A38',N:'#FF6FB5',M:'#5E2B57',B:'#FF9CC7'},
+    map:['................','....OO....OO....','...OSSO..OSSO...','...OSSSOOSSSO...',
+         '..OOWWWWWWWWOO..','..OWWWWWWWWWWO..','..OWEEWWWWEEWO..','..OWEEWWWWEEWO..',
+         '..OWWWWNNWWWWO..','..OBWWWMMWWWBO..','..OWWWWWWWWWWO..','...OWWWWWWWWO...',
+         '..OOWWWWWWWWOO..','.OWWWWWWWWWWWWO.','.OWWOOWWWWOOWWO.','.OOOOOOOOOOOOOO.'],
+    lines:['mrrow~ hi NAME! 🐾','*purrs so loudly*','pet me again? 😽','nya~ you smell like home','*knocks something off a table*'] },
+
+  { id:'bunny', name:'Peaches', kind:'Bunny', emoji:'🐰', voice:'squeak', treat:'🥕',
+    pal:{O:'#6B4A5E',W:'#FFF0F8',S:'#FFB8D9',E:'#3E1A38',N:'#FF7FB5',M:'#6B4A5E',B:'#FFA3CC'},
+    map:['....OO...OO.....','...OSSO.OSSO....','...OSSO.OSSO....','...OSSO.OSSO....',
+         '...OSSOOOSSO....','..OOWWWWWWWWOO..','..OWWWWWWWWWWO..','..OWEEWWWWEEWO..',
+         '..OBWWWNNWWWBO..','..OWWWWMMWWWWO..','..OWWWWWWWWWWO..','...OWWWWWWWWO...',
+         '..OOWWWWWWWWOO..','.OWWWWWWWWWWWWO.','.OWWOOWWWWOOWWO.','.OOOOOOOOOOOOOO.'],
+    lines:['*nose twitches*','squeak! 🥕','*binky!* she\'s so happy','hop hop hop…','she flopped over. that means trust 💗'] },
+
+  { id:'dog', name:'Biscuit', kind:'Shiba', emoji:'🐶', voice:'woof', treat:'🦴',
+    pal:{O:'#6B4326',W:'#F3C084',S:'#FFF6E8',E:'#3A2418',N:'#4A3020',M:'#4A3020',B:'#FFA88E'},
+    map:['................','.OOO........OOO.','.OSSO......OSSO.','.OSSOOOOOOOOSSO.',
+         '.OSSWWWWWWWWSSO.','.OOWWWWWWWWWWOO.','..OWEEWWWWEEWO..','..OWEEWWWWEEWO..',
+         '..OWSSSNNSSSWO..','..OBSSSMMSSSWO..','..OWSSSSSSSSWO..','...OWWWWWWWWO...',
+         '..OOWWWWWWWWOO..','.OWWWWWWWWWWWWO.','.OWSSOWWWWOSSWO.','.OOOOOOOOOOOOOO.'],
+    lines:['woof! 🐾','*tail going like a helicopter*','she brought you a sock','who\'s a good girl? she is.','*sits, very proud of it*'] },
+
+  { id:'hamster', name:'Pudding', kind:'Hamster', emoji:'🐹', voice:'squeak2', treat:'🌰',
+    pal:{O:'#7A5433',W:'#FFD9A0',S:'#FFF1DC',E:'#3A2418',N:'#D96F8F',M:'#7A5433',B:'#FFA8B8'},
+    map:['................','....OO....OO....','...OSSO..OSSO...','..OOWWWWWWWWOO..',
+         '..OWWWWWWWWWWO..','.OWWWWWWWWWWWWO.','.OWEEWWWWWWEEWO.','.OWEEWWWWWWEEWO.',
+         '.OWWWWWNNWWWWWO.','.OBWWWWMMWWWWBO.','.OWWSSSSSSSSWWO.','.OWWSSSSSSSSWWO.',
+         '..OWWSSSSSSWWO..','..OWWOOWWOOWWO..','..OOOOOOOOOOOO..','................'],
+    lines:['*cheeks completely full*','squeak squeak!','she\'s hoarding again 🌰','*runs on wheel at 3am*','tiny paws! tiny everything!'] },
+
+  { id:'penguin', name:'Waddles', kind:'Penguin', emoji:'🐧', voice:'honk', treat:'🐟',
+    pal:{O:'#2A2740',W:'#4A4766',S:'#FFFFFF',E:'#15121F',N:'#FFB13B',M:'#FFB13B',A:'#FFB13B',B:'#FF9CC7'},
+    map:['................','....OOOOOOOO....','...OWWWWWWWWO...','..OWWWWWWWWWWO..',
+         '..OWSSEWWESSWO..','..OWWWWAAWWWWO..','..OWWWWAAWWWWO..','..OWWWWWWWWWWO..',
+         '.OWWSSSSSSSSWWO.','.OWSSSSSSSSSSWO.','.OWSSSSSSSSSSWO.','.OWSSSSSSSSSSWO.',
+         '.OWWSSSSSSSSWWO.','..OWWSSSSSSWWO..','..OAAOOOOOOAAO..','...OOOOOOOOOO...'],
+    lines:['*honk!* 🐧','she waddled straight into a wall','sliding on her belly again','honk honk (she\'s telling a story)','cold? she LOVES cold.'] },
+
+  { id:'fox', name:'Clementine', kind:'Fox', emoji:'🦊', voice:'yip', treat:'🫐',
+    pal:{O:'#8A3F1E',W:'#FF9E5E',S:'#FFF6EC',E:'#3A1E10',N:'#3A1E10',M:'#8A3F1E',B:'#FF7F7F'},
+    map:['................','..OO........OO..','..OSO......OSO..','..OSSOOOOOOSSO..',
+         '..OWWWWWWWWWWO..','..OWEEWWWWEEWO..','..OWWWWWWWWWWO..','..OWWSSSSSSWWO..',
+         '..OWSSSNNSSSWO..','..OWSSSMMSSSWO..','..OWWSSSSSSWWO..','...OWWWWWWWWO...',
+         '..OOWWWWWWWWOO..','.OWWWWWWWWWWWWO.','.OWWSSWWWWSSWWO.','.OOOOOOOOOOOOOO.'],
+    lines:['yip! 🦊','*curls her tail around her feet*','she stole a strawberry','what DOES the fox say?','clever girl. too clever.'] },
+
+  { id:'frog', name:'Sprout', kind:'Frog', emoji:'🐸', voice:'ribbit', treat:'🪰',
+    pal:{O:'#3D7A3A',W:'#8FD98A',S:'#D9F2C4',E:'#22321F',N:'#3D7A3A',M:'#3D7A3A',B:'#FFA8C8'},
+    map:['................','...OOO....OOO...','..OWWO....OWWO..','..OWEO....OEWO..',
+         '..OWWOOOOOOWWO..','.OWWWWWWWWWWWWO.','.OWWWWWWWWWWWWO.','.OWWNWWWWWWNWWO.',
+         '.OBWWWWWWWWWWBO.','.OWMMMMMMMMMMWO.','.OWWWWWWWWWWWWO.','..OWWWWWWWWWWO..',
+         '..OWWWWWWWWWWO..','.OSSOWWWWWWOSSO.','.OSSOOOOOOOOSSO.','................'],
+    lines:['ribbit 🐸','*blink. blink.*','she caught a fly. don\'t ask.','sitting on a lily pad, thinking','boing!'] },
+
+  { id:'panda', name:'Dumpling', kind:'Panda', emoji:'🐼', voice:'snuffle', treat:'🎋',
+    pal:{O:'#3A3244',W:'#FFFFFF',S:'#FFC2DD',E:'#FFFFFF',N:'#3A3244',M:'#3A3244',A:'#3A3244',B:'#FFB0CE'},
+    map:['................','...OO......OO...','..OAAO....OAAO..','..OAAOOOOOOAAO..',
+         '..OWWWWWWWWWWO..','..OWAAWWWWAAWO..','..OWAEWWWWEAWO..','..OWAAWWWWAAWO..',
+         '..OWWWWNNWWWWO..','..OWWWWMMWWWWO..','..OWWWWWWWWWWO..','...OWWWWWWWWO...',
+         '..OAWWWWWWWWAO..','.OAAWWWWWWWWAAO.','.OAAOOOOOOOOAAO.','..OOOOOOOOOOOO..'],
+    lines:['*munching bamboo*','she rolled over. that\'s it. that\'s the move.','snrrf 🐼','she fell asleep mid-snack','round. so round.'] }
+];
+const petById = id => PETS.find(p => p.id === id) || PETS[0];
+
+const PET_MOODS = [
+  { min:90, e:'🥰', w:'Adores you' }, { min:70, e:'😄', w:'Very happy' },
+  { min:45, e:'🙂', w:'Content'    }, { min:20, e:'🥺', w:'Missing you' },
+  { min:0,  e:'😴', w:'Sleepy'     }
 ];
 
 
@@ -750,16 +1097,19 @@ const CAT_SLEEP = [
   '................'
 ];
 
-function pixelSVG(map, cls = '') {
+function pixelSVG(map, cls = '', pal = PX_PALETTE) {
   const h = map.length, w = map[0].length;
   let r = '';
   for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
+    let x = 0;
+    while (x < w) {
       const c = map[y][x];
-      if (c === '.') continue;
-      const col = PX_PALETTE[c];
-      if (!col) continue;
-      r += `<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${col}"/>`;
+      const col = c === '.' ? null : (pal[c] || PX_PALETTE[c]);
+      if (!col) { x++; continue; }
+      let run = 1;                                    // merge equal neighbours into one rect
+      while (x + run < w && map[y][x + run] === c) run++;
+      r += `<rect x="${x}" y="${y}" width="${run + .02}" height="1.02" fill="${col}"/>`;
+      x += run;
     }
   }
   return `<svg class="pixel ${cls}" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg"
@@ -767,6 +1117,34 @@ function pixelSVG(map, cls = '') {
 }
 const catSVG      = () => pixelSVG(CAT_MAP);
 const catSleepSVG = () => pixelSVG(CAT_SLEEP);
+const petSVG      = (pet, cls = '') => pixelSVG(pet.map, cls, pet.pal);
+
+/* watering can — fills up as `level` goes 0 → 1 */
+function canSVG(level, pouring) {
+  const L = Math.max(0, Math.min(1, level));
+  const top = 68 - L * 38;          // 68 = below the clip, so an empty can shows no water
+  return `<svg class="can-svg ${pouring ? 'pouring' : ''}" viewBox="0 0 96 74"
+      xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <linearGradient id="canG" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#FFC7E2"/><stop offset="1" stop-color="#E88FC8"/></linearGradient>
+      <clipPath id="canClip"><path d="M26 24 h40 a4 4 0 0 1 4 4 v34 a6 6 0 0 1-6 6 H28 a6 6 0 0 1-6-6 V28 a4 4 0 0 1 4-4 z"/></clipPath>
+    </defs>
+    <path d="M22 30 L6 46 L6 54 L12 54 L26 40 Z" fill="url(#canG)" stroke="#C46FA4" stroke-width="2.4" stroke-linejoin="round"/>
+    <circle cx="8" cy="50" r="4.5" fill="#FFE0F0" stroke="#C46FA4" stroke-width="2"/>
+    <path d="M26 24 h40 a4 4 0 0 1 4 4 v34 a6 6 0 0 1-6 6 H28 a6 6 0 0 1-6-6 V28 a4 4 0 0 1 4-4 z"
+      fill="url(#canG)" stroke="#C46FA4" stroke-width="2.4"/>
+    <g clip-path="url(#canClip)">
+      <rect x="20" y="${top}" width="54" height="40" fill="#7FD4F5" opacity=".85"/>
+      <ellipse cx="47" cy="${top}" rx="27" ry="2.6" fill="#B6EBFF" opacity=".9"/>
+    </g>
+    <path d="M66 30 q16 2 16 16 q0 10-8 12" fill="none" stroke="#C46FA4" stroke-width="3.4" stroke-linecap="round"/>
+    <rect x="22" y="20" width="48" height="7" rx="3.5" fill="#FFDCEE" stroke="#C46FA4" stroke-width="2.2"/>
+    <circle cx="38" cy="50" r="2.6" fill="#FF9EC8" opacity=".8"/>
+    <circle cx="54" cy="50" r="2.6" fill="#FF9EC8" opacity=".8"/>
+    <path d="M42 57 q4 4 8 0" stroke="#C46FA4" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  </svg>`;
+}
 
 /* ---------- Bubu — the little bear friend ---------- */
 function bubuSVG(cls = 'bubu-svg') {
@@ -1115,6 +1493,131 @@ const Sound = {
     const c = this.ctx, t = c.currentTime, g = this._env(.09, .09);
     const o = c.createOscillator(); o.type = 'triangle'; o.frequency.value = 1500;
     o.connect(g); o.start(t); o.stop(t + .1);
+  },
+
+  /* ---- a short tone with a pitch arc; the base of most animal voices ---- */
+  _call(type, f0, f1, f2, dur, peak, filt) {
+    const c = this.ctx, t = c.currentTime;
+    const g = c.createGain();
+    g.gain.setValueAtTime(.0001, t);
+    g.gain.exponentialRampToValueAtTime(peak, t + dur * .12);
+    g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    const o = c.createOscillator(); o.type = type;
+    o.frequency.setValueAtTime(f0, t);
+    o.frequency.linearRampToValueAtTime(f1, t + dur * .35);
+    o.frequency.exponentialRampToValueAtTime(Math.max(40, f2), t + dur);
+    let node = o;
+    if (filt) {
+      const f = c.createBiquadFilter();
+      f.type = 'bandpass'; f.Q.value = filt.q || 4;
+      f.frequency.setValueAtTime(filt.a, t);
+      f.frequency.linearRampToValueAtTime(filt.b, t + dur);
+      o.connect(f); node = f;
+    }
+    node.connect(g); g.connect(c.destination);
+    o.start(t); o.stop(t + dur + .02);
+  },
+  /* filling the watering can: rising pitch as it gets fuller + bubbles */
+  fill(dur = 1.5) {
+    if (!this.on) return; this.boot(); if (!this.ctx) return;
+    const c = this.ctx, t = c.currentTime;
+    const buf = c.createBuffer(1, c.sampleRate * dur, c.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * .5;
+    const src = c.createBufferSource(); src.buffer = buf;
+    const f = c.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 3.2;
+    f.frequency.setValueAtTime(420, t);
+    f.frequency.exponentialRampToValueAtTime(1500, t + dur);   // pitch climbs as it fills
+    const g = c.createGain();
+    g.gain.setValueAtTime(.0001, t);
+    g.gain.exponentialRampToValueAtTime(.13, t + Math.min(.12, dur * .3));
+    g.gain.setValueAtTime(.13, t + Math.max(dur * .5, dur - .25));   // never schedule in the past
+    g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    src.connect(f); f.connect(g); g.connect(c.destination);
+    src.start(t); src.stop(t + dur);
+    const spread = Math.max(0, dur - .4);
+    for (let i = 0; i < 7; i++) {                               // bloops
+      const at = t + .15 + Math.random() * spread, bg = c.createGain();
+      bg.gain.setValueAtTime(.0001, at);
+      bg.gain.exponentialRampToValueAtTime(.07, at + .01);
+      bg.gain.exponentialRampToValueAtTime(.0001, at + .13);
+      const o = c.createOscillator(); o.type = 'sine';
+      o.frequency.setValueAtTime(300 + Math.random() * 300, at);
+      o.frequency.exponentialRampToValueAtTime(900 + Math.random() * 400, at + .12);
+      o.connect(bg); bg.connect(c.destination); o.start(at); o.stop(at + .15);
+    }
+  },
+  /* pouring from the can onto the soil */
+  pour(dur = 1.2) {
+    if (!this.on) return; this.boot(); if (!this.ctx) return;
+    const c = this.ctx, t = c.currentTime;
+    const buf = c.createBuffer(1, c.sampleRate * dur, c.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1);
+    const src = c.createBufferSource(); src.buffer = buf;
+    const f = c.createBiquadFilter(); f.type = 'highpass'; f.frequency.value = 1400;
+    const g = c.createGain();
+    g.gain.setValueAtTime(.0001, t);
+    g.gain.exponentialRampToValueAtTime(.10, t + Math.min(.08, dur * .3));
+    g.gain.setValueAtTime(.10, t + Math.max(dur * .5, dur - .3));     // never schedule in the past
+    g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    src.connect(f); f.connect(g); g.connect(c.destination);
+    src.start(t); src.stop(t + dur);
+    this.water();
+  },
+  /* every animal has its own voice */
+  critter(voice) {
+    if (!this.on) return; this.boot(); if (!this.ctx) return;
+    const c = this.ctx;
+    switch (voice) {
+      case 'meow':    return this.meow();
+      case 'squeak':  this._call('triangle', 900, 1450, 800, .18, .16);
+                      setTimeout(() => this.on && this._call('triangle', 1000, 1600, 900, .15, .13), 170); return;
+      case 'squeak2': this._call('sine', 1500, 2100, 1300, .11, .13);
+                      setTimeout(() => this.on && this._call('sine', 1700, 2300, 1400, .09, .11), 120);
+                      setTimeout(() => this.on && this._call('sine', 1600, 2000, 1200, .09, .10), 240); return;
+      case 'woof':    this._call('sawtooth', 320, 210, 120, .17, .24, { a: 700, b: 380, q: 2.6 });
+                      setTimeout(() => this.on && this._call('sawtooth', 300, 190, 110, .20, .21, { a: 660, b: 340, q: 2.6 }), 230); return;
+      case 'honk':    this._call('square', 380, 300, 230, .26, .15, { a: 900, b: 600, q: 3 });
+                      setTimeout(() => this.on && this._call('square', 420, 330, 250, .22, .13, { a: 950, b: 620, q: 3 }), 300); return;
+      case 'yip':     this._call('sawtooth', 780, 1150, 540, .16, .18, { a: 1400, b: 900, q: 4 });
+                      setTimeout(() => this.on && this._call('sawtooth', 820, 1250, 600, .13, .15, { a: 1500, b: 950, q: 4 }), 180); return;
+      case 'ribbit': {                                  // low pulsing croak
+        const t = c.currentTime, g = c.createGain();
+        g.gain.setValueAtTime(.0001, t);
+        g.gain.exponentialRampToValueAtTime(.22, t + .04);
+        g.gain.exponentialRampToValueAtTime(.0001, t + .45);
+        const o = c.createOscillator(); o.type = 'sawtooth'; o.frequency.value = 155;
+        const lfo = c.createOscillator(), lg = c.createGain();
+        lfo.frequency.value = 28; lg.gain.value = 70; lfo.connect(lg); lg.connect(o.frequency);
+        const f = c.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 900;
+        o.connect(f); f.connect(g); g.connect(c.destination);
+        [o, lfo].forEach(x => { x.start(t); x.stop(t + .48); });
+        setTimeout(() => this.on && this._call('sawtooth', 210, 150, 110, .2, .17, { a: 600, b: 380, q: 3 }), 480);
+        return;
+      }
+      case 'snuffle': this._call('sine', 220, 170, 130, .28, .16, { a: 500, b: 300, q: 2 });
+                      setTimeout(() => this.on && this._call('sine', 200, 160, 120, .24, .13, { a: 460, b: 280, q: 2 }), 300); return;
+      case 'buzz': {
+        const t = c.currentTime, g = c.createGain();
+        g.gain.setValueAtTime(.0001, t);
+        g.gain.exponentialRampToValueAtTime(.07, t + .06);
+        g.gain.exponentialRampToValueAtTime(.0001, t + .5);
+        const o = c.createOscillator(); o.type = 'sawtooth'; o.frequency.value = 210;
+        const lfo = c.createOscillator(), lg = c.createGain();
+        lfo.frequency.value = 42; lg.gain.value = 30; lfo.connect(lg); lg.connect(o.frequency);
+        const f = c.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 1200;
+        o.connect(f); f.connect(g); g.connect(c.destination);
+        [o, lfo].forEach(x => { x.start(t); x.stop(t + .55); });
+        return;
+      }
+      case 'chirp':   this._call('sine', 2100, 2900, 1800, .09, .12);
+                      setTimeout(() => this.on && this._call('sine', 2400, 3100, 2000, .08, .10), 110); return;
+      case 'flutter': this._call('sine', 1300, 1700, 1100, .13, .07); return;
+      case 'crawl':   this._call('triangle', 400, 520, 330, .16, .07); return;
+      case 'twinkle': return this.chime();
+      default:        return this.pop();
+    }
   }
 };
 
@@ -1137,6 +1640,12 @@ function dkey(d = new Date()) {
 function pkey(k) { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); }
 function addD(d, n) { const x = new Date(d); x.setDate(x.getDate() + n); return x; }
 const TODAY = () => dkey();
+/* day-of-year, so each list steps to a new item every day and never repeats back-to-back */
+const dayNum = (d = new Date()) =>
+  Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 864e5) + d.getFullYear() * 365;
+const daily = (arr, salt = 0) => arr[(dayNum() + salt) % arr.length];
+const daysSince = k => k ? Math.max(0, Math.round((pkey(TODAY()) - pkey(k)) / 864e5)) : 999;
+
 /* chart widths — match the real container so SVGs scale 1:1 (no distortion) */
 const cardW  = () => Math.max(230, Math.min(900, innerWidth - 32) - 28);
 const sheetW = () => Math.max(230, Math.min(560, innerWidth) - 40);
@@ -1148,7 +1657,8 @@ const pretty = k => pkey(k).toLocaleDateString(undefined, { month: 'short', day:
 const KEY = 'iliana-habit-garden-v1';
 const DEFAULTS = () => ({
   v: 1, habits: [], goals: [], notes: [],
-  garden: { pots: [], harvested: {}, seenFirst: false },
+  garden: { pots: [], harvested: {}, seenFirst: false, can: 0 },
+  pets: {},
   settings: { sound: true, theme: null },     // null = follow the system
   visits: 0, bubuIdx: 0
 });
@@ -1158,7 +1668,8 @@ function load() {
   try {
     const raw = localStorage.getItem(KEY);
     if (raw) S = Object.assign(DEFAULTS(), JSON.parse(raw));
-    S.garden = Object.assign({ pots: [], harvested: {}, seenFirst: false }, S.garden);
+    S.garden = Object.assign({ pots: [], harvested: {}, seenFirst: false, can: 0 }, S.garden);
+    S.pets = S.pets || {};
     S.settings = Object.assign({ sound: true, theme: null }, S.settings);
   } catch (e) { S = DEFAULTS(); }
 }
@@ -1233,6 +1744,57 @@ const hpCol = hp => hp >= 65 ? 'linear-gradient(135deg,#7FD1A8,#57C08A)'
   : hp >= 45 ? 'linear-gradient(135deg,#FFD98A,#FFB86B)' : 'linear-gradient(135deg,#FF9EAE,#FF6F86)';
 const activePot = () => S.garden.pots.find(p => p.id === S.garden.active) || S.garden.pots[0];
 
+/* ---------- weather (Open-Meteo, only after Iliana taps to allow it) ---------- */
+const WKEY = 'iliana-weather-v1';
+let wxBusy = false;
+function wxCache() { try { return JSON.parse(localStorage.getItem(WKEY)) || null; } catch (e) { return null; } }
+function wxFresh() { const c = wxCache(); return c && Date.now() - c.at < 30 * 60000 ? c : null; }
+
+function askWeather() {
+  if (wxBusy) return;
+  if (!navigator.geolocation) { toast('This device can\'t share its location 🌍'); return; }
+  wxBusy = true; toast('Finding your sky… 🌤️');
+  navigator.geolocation.getCurrentPosition(
+    pos => loadWeather(pos.coords.latitude, pos.coords.longitude),
+    () => { wxBusy = false; toast('No location — tap again to retry 📍', 2600); rToday(); },
+    { timeout: 12000, maximumAge: 900000 }
+  );
+}
+function loadWeather(lat, lon) {
+  const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat.toFixed(3) +
+    '&longitude=' + lon.toFixed(3) +
+    '&current=temperature_2m,apparent_temperature,weather_code,relative_humidity_2m' +
+    '&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=1';
+  fetch(url).then(r => r.ok ? r.json() : Promise.reject())
+    .then(d => {
+      localStorage.setItem(WKEY, JSON.stringify({ at: Date.now(), lat, lon, d }));
+      wxBusy = false; rToday(); Sound.pop();
+    })
+    .catch(() => { wxBusy = false; toast('Couldn\'t reach the weather ☁️ tap to retry'); rToday(); });
+}
+function weatherCard() {
+  const c = wxCache();
+  if (!c) return `<div class="glass card wx-ask" data-act="weather">
+      <div class="row"><span style="font-size:26px">📍</span>
+        <div class="grow"><div style="font-weight:800;font-size:14.5px">Show today's weather</div>
+          <div class="muted">Tap once to allow location — it's only used to look up your forecast.</div></div>
+        <span style="opacity:.5">›</span></div></div>`;
+  const cur = c.d.current, day = c.d.daily;
+  const [ic, desc] = WMO[cur.weather_code] || ['🌈', 'Outside'];
+  const t = Math.round(cur.temperature_2m), fl = Math.round(cur.apparent_temperature);
+  const hi = Math.round(day.temperature_2m_max[0]), lo = Math.round(day.temperature_2m_min[0]);
+  const stale = Date.now() - c.at > 30 * 60000;
+  if (stale && !wxBusy) setTimeout(() => loadWeather(c.lat, c.lon), 40);
+  return `<div class="glass card wx" data-act="weather">
+    <div class="row">
+      <div class="wx-ic">${ic}</div>
+      <div class="grow"><div class="wx-t">${t}<span>°</span></div>
+        <div class="muted" style="margin-top:-2px">${desc} · feels ${fl}°</div></div>
+      <div class="wx-hl"><span>↑ ${hi}°</span><span>↓ ${lo}°</span></div>
+    </div>
+    <div class="wx-note">${esc(weatherNote(cur.weather_code, t))}</div></div>`;
+}
+
 /* ---------- fx ---------- */
 function toast(msg, ms = 2100) {
   const t = $('#toast'); t.innerHTML = msg; t.classList.add('on');
@@ -1268,9 +1830,10 @@ let TAB = 'today';
 
 function render() {
   $$('.screen').forEach(s => s.classList.toggle('on', s.id === 'sc-' + TAB));
-  ({ today: rToday, habits: rHabits, garden: rGarden, goals: rGoals, notes: rNotes })[TAB]();
+  ({ today: rToday, habits: rHabits, garden: rGarden, pets: rPets, goals: rGoals, notes: rNotes })[TAB]();
+  /* the garden and pets have their own buttons — no floating one to collide with them */
   const fab = $('#fab');
-  fab.style.display = TAB === 'today' ? 'none' : 'grid';
+  fab.style.display = ['today', 'pets', 'garden'].includes(TAB) ? 'none' : 'grid';
   movePill();
 }
 function allDoneToday() {
@@ -1332,9 +1895,14 @@ function rToday() {
       <div class="msg grow">${bubu.replace(NAME, `<b>${NAME}</b>`)}<div class="muted" style="margin-top:6px">— Bubu 🧸 tap me</div></div>
     </div>
 
+    ${weatherCard()}
     ${ov}
     ${streaks.length ? `<div class="row" style="gap:8px;flex-wrap:wrap;margin:0 4px 14px">
       ${streaks.map(x => `<span class="chip hot">🔥 ${x.s}d ${x.h.icon} ${esc(x.h.name)}</span>`).join('')}</div>` : ''}
+
+    <div class="sec-title"><span>Just for today</span><span class="mini">new every morning</span></div>
+    <div class="two">${breakfastCard()}${hairCard()}</div>
+
     ${habitsHTML}
 
     ${pot ? gardenPeek(pot) : `<div class="sec-title"><span>Your garden</span></div>
@@ -1346,13 +1914,43 @@ function rToday() {
   </div>`;
 }
 
+function breakfastCard() {
+  const b = daily(BREAKFASTS);
+  return `<div class="glass card idea idea-food" data-act="recipe">
+    <div class="idea-top"><span class="idea-tag">🍽️ Breakfast idea</span><span class="idea-time">${b.t}</span></div>
+    <div class="idea-emo">${b.e}</div>
+    <h4>${esc(b.n)}</h4>
+    <p class="muted">${b.i.slice(0, 3).map(esc).join(' · ')}${b.i.length > 3 ? '…' : ''}</p>
+    <span class="idea-go">See the recipe →</span></div>`;
+}
+function hairCard() {
+  const h = daily(HAIRSTYLES, 7 + (S.hairNudge || 0));
+  return `<div class="glass card idea idea-hair" data-act="hair">
+    <div class="idea-top"><span class="idea-tag">💇‍♀️ Hair today</span><span class="idea-time">${h.t}</span></div>
+    <div class="idea-emo">${h.e}</div>
+    <h4>${esc(h.n)}</h4>
+    <p class="muted">${esc(h.d)}</p>
+    <span class="idea-go">Tap for another idea ↻</span></div>`;
+}
+function recipeSheet() {
+  const b = daily(BREAKFASTS);
+  openSheet(`${b.e} ${b.n}`, `
+    <p class="muted" style="margin:-4px 0 16px">Today's breakfast for ${NAME} · about ${b.t}</p>
+    <div class="chart-head"><h4>You'll need</h4></div>
+    <ul class="reci">${b.i.map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+    <div class="chart-head" style="margin-top:20px"><h4>How</h4></div>
+    <ol class="reci steps-n">${b.s.map(x => `<li>${esc(x)}</li>`).join('')}</ol>
+    <p class="muted" style="text-align:center;margin:22px 0 4px">A new one appears every morning 💗</p>
+  `, `<button class="btn primary wide" data-act="close">Yum</button>`);
+}
+
 function gardenPeek(p) {
   const t = plantById(p.type), hp = potHealth(p), st = potStage(p);
   const wateredToday = p.water.includes(TODAY());
   return `<div class="sec-title"><span>Your garden</span><span class="mini">${STAGE_NAMES[st]}</span></div>
     <div class="glass card" data-act="go" data-tab="garden">
       <div class="row">
-        <div style="width:96px;flex:0 0 auto;margin:-14px 0">${plantSVG(p.type, st, hp)}</div>
+        <div class="peek-plant">${plantSVG(p.type, st, hp)}</div>
         <div class="grow">
           <div style="font-weight:850;font-size:16px">${t.emoji} ${esc(p.name)}</div>
           <div class="muted" style="margin-top:3px">${hpFace(hp)} ${hpWord(hp)} · day ${potGrowth(p)}</div>
@@ -1382,20 +1980,19 @@ function quickPeek() {
         <div class="pbar"><i style="width:${pct}%"></i></div></div>`;
     }).join('');
   if (ns.length) h += `<div class="sec-title"><span>Recent notes</span>
-    <span class="mini" data-act="go" data-tab="notes">See all →</span></div>` +
-    `<div class="notes">` + ns.map(noteCard).join('') + `</div>`;
+    <span class="mini" data-act="go" data-tab="notes">See all →</span></div>` + notesMasonry(ns);
   return h;
 }
 
 /* ---------------- HABITS ---------------- */
-function habitRow(h) {
+function habitRow(h, idx = 0) {
   const k = TODAY(), c = cnt(h, k), done = isDone(h, k), s = streak(h);
   let wk = '';
   for (let i = 6; i >= 0; i--) {
     const d = addD(new Date(), -i), kk = dkey(d);
     wk += `<i class="${isDone(h, kk) ? 'f' : ''} ${i === 0 ? 't' : ''}"></i>`;
   }
-  return `<div class="glass habit" data-act="habit" data-id="${h.id}">
+  return `<div class="glass habit" data-act="habit" data-id="${h.id}" style="--i:${idx}">
     <div class="emo" style="background:${tint(h.color, .25)}">${h.icon}</div>
     <div class="grow">
       <div class="nm">${esc(h.name)}</div>
@@ -1578,6 +2175,38 @@ function habitEditor(h) {
 }
 
 /* ---------------- GARDEN ---------------- */
+/* little visitors that drift through the scene */
+let BUGS = [], bugTimer = null;
+function spawnBugs(n = 4) {
+  BUGS = [];
+  for (let i = 0; i < n; i++) {
+    const c = CRITTERS[Math.floor(Math.random() * CRITTERS.length)];
+    const ground = c.s === 'crawl';
+    BUGS.push({
+      id: uid(), e: c.e, n: c.n, s: c.s,
+      x: 8 + Math.random() * 72,
+      y: ground ? 58 + Math.random() * 10 : 10 + Math.random() * 42,
+      path: ground ? 'crawl' : 'flit' + (1 + Math.floor(Math.random() * 3)),
+      dur: (ground ? 16 : 7) + Math.random() * 8,
+      delay: -Math.random() * 10,
+      scale: 0.82 + Math.random() * 0.5
+    });
+  }
+}
+function bugsHTML() {
+  return BUGS.map(b => `<span class="bug bug-${b.path}" data-act="bug" data-id="${b.id}"
+    style="left:${b.x}%;top:${b.y}%;font-size:${(15 * b.scale).toFixed(1)}px;
+    animation-duration:${b.dur}s;animation-delay:${b.delay}s">${b.e}</span>`).join('');
+}
+function startBugs() {
+  clearInterval(bugTimer);
+  bugTimer = setInterval(() => {
+    if (TAB !== 'garden' || document.hidden) return;
+    spawnBugs(3 + Math.floor(Math.random() * 3));
+    const layer = $('#bugLayer'); if (layer) layer.innerHTML = bugsHTML();
+  }, 22000);
+}
+
 function rGarden() {
   const p = activePot();
   const collected = Object.entries(S.garden.harvested || {});
@@ -1592,12 +2221,29 @@ function rGarden() {
     const t = plantById(p.type), hp = potHealth(p), st = potStage(p), gr = potGrowth(p);
     const wateredToday = p.water.includes(TODAY());
     const full = st >= 6;
+    const canFull = (S.garden.can || 0) >= 1;
     main = `
       <div class="glass pot-stage" data-act="water" data-id="${p.id}">
         <div class="sky"></div><div class="sun">${hp >= 65 ? '☀️' : '🌥️'}</div>
+        <div class="rays"></div>
+        <div class="bug-layer" id="bugLayer">${bugsHTML()}</div>
         ${plantSVG(p.type, st, hp)}
         <div class="tap-hint">${full ? '🎉 Fully grown — ready to harvest!'
-        : wateredToday ? '💚 Watered today · tap to say hi' : '👆 Tap anywhere to water me'}</div>
+        : wateredToday ? '💚 Watered today · tap to say hi'
+          : canFull ? '👆 Tap the plant to pour the water' : '💧 Fill the can first, then tap me'}</div>
+      </div>
+
+      <div class="glass card water-station">
+        <button class="tap-post ${canFull ? 'off' : ''}" data-act="fill" aria-label="fill the watering can">
+          <span class="spout">🚰</span><span class="lbl">${canFull ? 'Can is full' : 'Fill the can'}</span>
+          <span class="stream"></span>
+        </button>
+        <div class="can-holder ${canFull ? 'full' : ''}" id="canHolder">${canSVG(canFull ? 1 : 0)}</div>
+        <div class="water-copy">
+          <div style="font-weight:800;font-size:13.5px">${canFull ? 'Ready to water 💧' : 'The can is empty'}</div>
+          <div class="muted" style="font-size:11.5px;margin-top:2px">
+            ${canFull ? 'Tap your plant to pour it out.' : 'Tap the tap to fill it up.'}</div>
+        </div>
       </div>
 
       <div class="glass card" style="margin-top:14px">
@@ -1646,15 +2292,44 @@ function rGarden() {
 function seedSheet() {
   openSheet('Choose a seed 🌱', `
     <p class="muted" style="margin:-4px 0 16px">Each one grows at its own pace, ${NAME}. Water it once a day.</p>
-    <div class="seedgrid">${PLANTS.map(p => `<button class="seed" data-act="plant" data-type="${p.id}">
+    <div class="seedgrid">${PLANTS.map((p, i) => `<button class="seed" data-act="plant" data-type="${p.id}" style="--i:${i}">
       <span class="e">${p.emoji}</span><span class="n">${p.name}</span>
       <span class="d">${p.days + 1} days · ${p.blurb}</span></button>`).join('')}</div>`,
     `<button class="btn ghost wide" data-act="close">Maybe later</button>`);
 }
 
+/* fill the can at the tap — 1.4s of rising water, with the sound rising too */
+let filling = false;
+function fillCan() {
+  if (filling) return;
+  if ((S.garden.can || 0) >= 1) { toast('The can is already full 💧'); Sound.tick(); return; }
+  filling = true;
+  const post = $('.tap-post'), holder = $('#canHolder');
+  if (post) post.classList.add('running');
+  Sound.fill(1.4); buzz(10);
+  const t0 = performance.now();
+  const step = now => {
+    const q = Math.min(1, (now - t0) / 1400);
+    if (holder) holder.innerHTML = canSVG(q);
+    if (q < 1) requestAnimationFrame(step);
+    else {
+      filling = false; S.garden.can = 1; save(); rGarden();
+      Sound.pop(); toast('Can full! Now tap your plant 🌱');
+    }
+  };
+  requestAnimationFrame(step);
+}
+
 function waterPot(p, x, y) {
   const today = TODAY();
   const st0 = potStage(p);
+  /* an already-watered plant just wants attention — no water needed */
+  if (!p.water.includes(today) && (S.garden.can || 0) < 1) {
+    Sound.tick(); buzz(24);
+    const h = $('#canHolder'); if (h) { h.classList.add('shake'); setTimeout(() => h.classList.remove('shake'), 500); }
+    toast('The can is empty — fill it at the tap first 💧', 2400);
+    return;
+  }
   if (p.water.includes(today)) {
     p.love = Math.min(10, (p.love || 0) + 1);
     Sound.purr(); buzz(8);
@@ -1662,8 +2337,11 @@ function waterPot(p, x, y) {
     toast(`${plantById(p.type).emoji} loves the attention 💕`);
   } else {
     p.water.push(today);
-    Sound.water(); buzz(18);
+    S.garden.can = 0;                                  // the can empties into the pot
+    const can = $('#canHolder'); if (can) can.classList.add('pour');
+    Sound.pour(1.2); buzz(18);
     dropAt(x, y, ['💧', '💧', '🫧', '💦']);
+    setTimeout(() => dropAt(x, y + 20, ['💧', '💦']), 320);
     const st1 = potStage(p);
     if (st1 > st0) {
       confetti(x, y, ['🌿', '✨', '🌱', '💚']);
@@ -1686,13 +2364,81 @@ function dropAt(x, y, set) {
   }
 }
 
+/* ---------------- PETS ---------------- */
+function petState(id) {
+  if (!S.pets) S.pets = {};
+  if (!S.pets[id]) S.pets[id] = { aff: 45, last: TODAY(), fed: null, plays: 0 };
+  return S.pets[id];
+}
+const petAff = id => {
+  const s = petState(id);
+  return Math.max(0, Math.min(100, Math.round(s.aff - daysSince(s.last) * 8)));
+};
+const petMood = a => PET_MOODS.find(m => a >= m.min) || PET_MOODS[PET_MOODS.length - 1];
+
+function rPets() {
+  const total = Math.round(PETS.reduce((a, p) => a + petAff(p.id), 0) / PETS.length);
+  const hungry = PETS.filter(p => petState(p.id).fed !== TODAY()).length;
+
+  $('#sc-pets').innerHTML = `<div class="wrap">
+    <div class="hero"><div class="hello">Pets</div>
+      <div class="sub">Eight little friends who missed you, ${NAME} 🐾</div></div>
+
+    <div class="glass card pets-top">
+      <div class="row">
+        <div class="ring-wrap" style="width:82px;height:82px;flex:0 0 auto">${ringSVG(total / 100, 82, 9, 'pets')}
+          <div class="lbl"><div><b style="font-size:19px">${total}</b><span>LOVED</span></div></div></div>
+        <div class="grow">
+          <div style="font-weight:850;font-size:16px">${total >= 80 ? 'Everyone adores you 🥰'
+      : total >= 50 ? 'A happy little family 💗' : 'They\'d love some attention 🥺'}</div>
+          <div class="muted" style="margin-top:4px">
+            ${hungry ? `${hungry} still ${hungry === 1 ? 'hasn\'t' : 'haven\'t'} had a treat today` : 'Everyone has been fed today 🍽️'}</div>
+        </div>
+      </div>
+      <button class="btn primary wide" style="margin-top:14px" data-act="petall">🐾 Say hello to everyone</button>
+    </div>
+
+    <div class="sec-title"><span>Your friends</span><span class="mini">tap to play</span></div>
+    <div class="pets-grid">${PETS.map((p, i) => {
+        const a = petAff(p.id), m = petMood(a), st = petState(p.id), fed = st.fed === TODAY();
+        return `<div class="glass pet-card" style="--i:${i}">
+          <div class="pet-art" data-act="pet" data-id="${p.id}" id="pet-${p.id}">${petSVG(p)}</div>
+          <div class="pet-name">${esc(p.name)}</div>
+          <div class="pet-kind">${p.emoji} ${esc(p.kind)}</div>
+          <div class="pet-bar"><i style="width:${a}%"></i></div>
+          <div class="pet-mood"><span>${m.e}</span><span>${esc(m.w)}</span></div>
+          <button class="pet-feed ${fed ? 'done' : ''}" data-act="feed" data-id="${p.id}">
+            ${fed ? '✓ fed today' : p.treat + ' give a treat'}</button>
+        </div>`;
+      }).join('')}</div>
+
+    <p class="muted" style="text-align:center;margin:18px 6px 4px;line-height:1.6">
+      Every one of them has their own voice — turn the sound on and tap them 🔊</p>
+  </div>`;
+}
+
+function playWith(id, x, y) {
+  const p = petById(id), s = petState(id);
+  s.aff = Math.min(100, petAff(id) + 6); s.last = TODAY(); s.plays = (s.plays || 0) + 1;
+  Sound.critter(p.voice); buzz(16);
+  const el = $('#pet-' + id);
+  if (el) { el.classList.remove('bounce'); void el.offsetWidth; el.classList.add('bounce'); }
+  confetti(x, y, ['💗', '✨', '🐾']);
+  toast(p.lines[Math.floor(Math.random() * p.lines.length)].replace('NAME', NAME));
+  save();
+  const bar = el && el.parentElement.querySelector('.pet-bar i');
+  if (bar) bar.style.width = petAff(id) + '%';
+  const mood = el && el.parentElement.querySelector('.pet-mood');
+  if (mood) { const m = petMood(petAff(id)); mood.innerHTML = `<span>${m.e}</span><span>${m.w}</span>`; }
+}
+
 /* ---------------- GOALS ---------------- */
 function rGoals() {
   const live = S.goals.filter(g => !g.done), done = S.goals.filter(g => g.done);
-  const card = g => {
+  const card = (g, idx = 0) => {
     const pct = Math.min(100, Math.round(g.cur / Math.max(1, g.target) * 100));
     const left = g.due ? Math.ceil((pkey(g.due) - new Date().setHours(0, 0, 0, 0)) / 864e5) : null;
-    return `<div class="glass goal ${g.done ? 'done' : ''}">
+    return `<div class="glass goal ${g.done ? 'done' : ''}" style="--i:${idx}">
       <div class="hd">
         <div class="em" style="background:${tint(g.color, .25)}">${g.icon}</div>
         <div class="grow"><h4>${esc(g.title)}</h4>
@@ -1790,13 +2536,27 @@ function goalEditor(g) {
 /* ---------------- NOTES ---------------- */
 const NOTE_COLORS = ['#FFD9EC', '#F0DAFF', '#DDE4FF', '#FFE6D2', '#D9F7E8', '#FFF3C4'];
 let noteQ = '';
-function noteCard(n) {
-  return `<div class="note glass" data-act="note" data-id="${n.id}"
-      style="background:${n.color}66;border-color:${n.color}">
+function noteCard(n, i = 0) {
+  return `<div class="note glass" data-act="note" data-id="${n.id}" style="--i:${i};
+      background:${n.color}66;border-color:${n.color}">
     ${n.pin ? '<span class="pin">📌</span>' : ''}
     ${n.title ? `<h5>${esc(n.title)}</h5>` : ''}
     <p>${esc((n.body || '').slice(0, 260))}${(n.body || '').length > 260 ? '…' : ''}</p>
     <div class="dt">${pretty(dkey(new Date(n.up)))}</div></div>`;
+}
+/* deal the notes into balanced columns ourselves — deterministic on every browser */
+function notesMasonry(list) {
+  const w = innerWidth;
+  const n = Math.max(1, Math.min(4, w < 360 ? 1 : w < 780 ? 2 : w < 1100 ? 3 : 4));
+  const cols = Array.from({ length: n }, () => []), h = new Array(n).fill(0);
+  list.forEach((note, i) => {
+    const est = 74 + (note.title ? 26 : 0) + Math.min(260, (note.body || '').length) * 0.55
+      + ((note.body || '').match(/\n/g) || []).length * 12;
+    const c = h.indexOf(Math.min(...h));
+    cols[c].push(noteCard(note, i)); h[c] += est + 12;
+  });
+  return `<div class="notes" style="grid-template-columns:repeat(${n},minmax(0,1fr))">
+    ${cols.map(c => `<div class="notes-col">${c.join('')}</div>`).join('')}</div>`;
 }
 function rNotes() {
   const q = noteQ.toLowerCase();
@@ -1808,7 +2568,7 @@ function rNotes() {
       <div class="sub">Thoughts, lists and little reminders 💌</div></div>
     <div class="searchbar glass-thin"><span>🔍</span>
       <input id="noteSearch" placeholder="Search your notes…" value="${esc(noteQ)}"></div>
-    ${list.length ? `<div class="notes">${list.map(noteCard).join('')}</div>`
+    ${list.length ? notesMasonry(list)
       : `<div class="glass card empty"><div class="art">📝</div>
         <h4>${noteQ ? 'Nothing found' : 'Your notebook is empty'}</h4>
         <p>${noteQ ? 'Try another word.' : `Write down anything, ${NAME} — a grocery list, a memory, a feeling.`}</p>
@@ -1975,6 +2735,66 @@ document.addEventListener('click', e => {
       save(); habitDetail(h); render(); break;
     }
 
+    case 'recipe': recipeSheet(); Sound.pop(); break;
+    case 'hair': {
+      S.hairNudge = (S.hairNudge || 0) + 1;          // shuffle to the next idea
+      save(); rToday(); Sound.pop(); confetti(x, y, ['💇‍♀️', '✨', '🎀']);
+      const h = daily(HAIRSTYLES, 7 + S.hairNudge);
+      toast(`${h.e} <b>${esc(h.n)}</b>`, 2600); break;
+    }
+    case 'weather': {
+      const c = wxCache();
+      if (c) { toast('Refreshing the forecast… 🌤️'); loadWeather(c.lat, c.lon); }
+      else askWeather();
+      break;
+    }
+
+    case 'pet': e.stopPropagation(); playWith(id, x, y); break;
+    case 'feed': {
+      e.stopPropagation();
+      const p = petById(id), s = petState(id);
+      if (s.fed === TODAY()) { toast(`${p.name} is full already 🍽️`); Sound.tick(); return; }
+      s.fed = TODAY(); s.aff = Math.min(100, petAff(id) + 14); s.last = TODAY();
+      Sound.critter(p.voice); Sound.chime();
+      confetti(x, y, [p.treat, '💗', '✨']); buzz(20);
+      toast(`${p.name} loved the ${p.treat} — thank you, ${NAME}!`);
+      save(); rPets(); break;
+    }
+    case 'petall': {
+      PETS.forEach((p, i) => setTimeout(() => {
+        const s = petState(p.id);
+        s.aff = Math.min(100, petAff(p.id) + 4); s.last = TODAY();
+        Sound.critter(p.voice);
+        const el = $('#pet-' + p.id);
+        if (el) { el.classList.remove('bounce'); void el.offsetWidth; el.classList.add('bounce'); }
+        if (i === PETS.length - 1) { save(); rPets(); toast(`Everyone says hi back, ${NAME} 🐾💗`, 2800); }
+      }, i * 260));
+      confetti(x, y, ['🐾', '💗', '✨', '🐱', '🐰']);
+      break;
+    }
+
+    case 'bug': {
+      const b = BUGS.find(b => b.id === id); if (!b) return;
+      const el = t;
+      Sound.critter(b.s); buzz(8);
+      el.classList.add('away');
+      confetti(x, y, ['✨', '💗']);
+      toast(CRITTER_LINES[Math.floor(Math.random() * CRITTER_LINES.length)]);
+      BUGS = BUGS.filter(v => v.id !== b.id);
+      setTimeout(() => el.remove(), 900);
+      setTimeout(() => {                                    // a new visitor wanders in
+        if (TAB !== 'garden') return;
+        const c = CRITTERS[Math.floor(Math.random() * CRITTERS.length)], ground = c.s === 'crawl';
+        BUGS.push({ id: uid(), e: c.e, n: c.n, s: c.s, x: 8 + Math.random() * 72,
+          y: ground ? 58 + Math.random() * 10 : 10 + Math.random() * 42,
+          path: ground ? 'crawl' : 'flit' + (1 + Math.floor(Math.random() * 3)),
+          dur: (ground ? 16 : 7) + Math.random() * 8, delay: 0, scale: .82 + Math.random() * .5 });
+        const layer = $('#bugLayer'); if (layer) layer.innerHTML = bugsHTML();
+      }, 4200 + Math.random() * 5000);
+      break;
+    }
+    case 'fill': e.stopPropagation(); fillCan(); break;
+
     case 'seeds': seedSheet(); break;
     case 'plant': {
       const ty = plantById(t.dataset.type);
@@ -2062,6 +2882,8 @@ document.addEventListener('click', e => {
 
     case 'bubu': {
       S.bubuIdx = (S.bubuIdx + 1) % BUBU_LINES.length; save(); rToday();
+      const card = $('.bubu-card');
+      if (card) { card.classList.add('wiggle'); setTimeout(() => card.classList.remove('wiggle'), 750); }
       Sound.pop(); confetti(x, y, ['💗', '🧸', '✨']); break;
     }
     case 'settings': settingsSheet(); break;
@@ -2095,7 +2917,7 @@ $('#fab').addEventListener('click', e => {
   Sound.pop();
   ({ habits: () => habitEditor(null), goals: () => goalEditor(null),
      notes: () => noteEditor(null), garden: () => seedSheet(),
-     today: () => habitEditor(null) })[TAB]();
+     pets: () => rPets(), today: () => habitEditor(null) })[TAB]();
 });
 
 /* tabs */
@@ -2103,6 +2925,7 @@ function setTab(name) {
   TAB = name;
   $$('.tab').forEach(b => b.classList.toggle('on', b.dataset.tab === name));
   Sound.tick(); buzz(8);
+  if (name === 'garden') { spawnBugs(3 + Math.floor(Math.random() * 3)); startBugs(); }
   render();
   $('main').scrollTop = 0;
 }
