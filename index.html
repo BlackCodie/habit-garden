@@ -285,12 +285,20 @@ nav.tabbar{
 nav.tabbar::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
   background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,0) 42%,rgba(255,255,255,.32));
   mix-blend-mode:overlay}
-.tab{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 1px 6px;
-  border-radius:var(--r-pill);position:relative;z-index:1;transition:transform .34s var(--spring)}
+.tab{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 1px 6px;
+  border-radius:var(--r-pill);position:relative;z-index:1;
+  transition:transform .34s var(--spring),flex-grow .44s var(--spring)}
 .tab .ic{font-size:19px;line-height:1;transition:transform .4s var(--spring),filter .3s}
-.tab .tx{font-size:8.8px;font-weight:800;letter-spacing:0;color:var(--ink-3);transition:color .3s;
+.tab .tx{font-size:9.5px;font-weight:800;letter-spacing:0;color:var(--ink-3);transition:color .3s;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-@media (min-width:400px){.tab .tx{font-size:9.5px}.tab .ic{font-size:20px}}
+/* seven tabs on a phone: only the selected one needs its name */
+@media (max-width:600px){
+  .tab .tx{display:none}
+  .tab.on .tx{display:block}
+  .tab.on{flex-grow:2.3}
+  .tab .ic{font-size:20px}
+  .tab{padding:9px 1px 8px}
+}
 .tab:active{transform:scale(.9)}
 .tab.on .ic{transform:translateY(-1px) scale(1.16)}
 .tab.on .tx{color:#fff}
@@ -640,6 +648,107 @@ textarea.input{resize:none;min-height:120px;line-height:1.5;font-weight:500}
 @keyframes wiggle{0%,100%{transform:rotate(0)}20%{transform:rotate(-11deg) scale(1.07)}
   50%{transform:rotate(9deg) scale(1.04)}75%{transform:rotate(-5deg)}}
 
+/* ---------- stretch ---------- */
+.routines{display:flex;flex-direction:column;gap:11px}
+.routine{display:flex;align-items:center;gap:13px;padding:14px 15px;border-radius:var(--r-md);
+  text-align:left;width:100%;animation:noteIn .45s var(--spring) backwards;
+  animation-delay:calc(var(--i,0) * 45ms);transition:transform .3s var(--spring)}
+.routine:active{transform:scale(.98)}
+.r-emo{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;font-size:24px;flex:0 0 auto;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 4px 12px rgba(180,90,200,.18)}
+.r-copy{flex:1;min-width:0}
+.r-n{font-weight:850;font-size:15.5px;letter-spacing:-.2px}
+.r-d{font-size:12.5px;color:var(--ink-2);margin-top:2px}
+.r-meta{font-size:11px;font-weight:700;color:var(--ink-3);margin-top:4px}
+.r-play{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;
+  background:var(--grad-main);color:#fff;font-size:12px;padding-left:2px;
+  box-shadow:0 4px 12px rgba(255,92,168,.4)}
+.rw{position:relative}
+.rw-x{position:absolute;right:52px;top:50%;transform:translateY(-50%);width:32px;height:32px;font-size:13px}
+.seg-mini{padding:5px 11px;border-radius:var(--r-pill);background:rgba(255,255,255,.5);
+  border:1px solid var(--glass-stroke-2);font-size:11.5px;font-weight:800;color:var(--ink-2)}
+[data-theme="twilight"] .seg-mini{background:rgba(255,255,255,.12)}
+.lib{display:flex;flex-direction:column;gap:8px}
+.lib-it{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:var(--r-md);
+  text-align:left;width:100%;transition:transform .3s var(--spring)}
+.lib-it:active{transform:scale(.98)}
+.lib-n{flex:1;min-width:0;font-size:14px;font-weight:800;letter-spacing:-.15px}
+.lib-s{font-size:11.5px;font-weight:700;color:var(--ink-3);white-space:nowrap}
+.lib-go{color:var(--ink-3);font-size:15px}
+.cue-card{padding:16px 18px}
+.cue-lead{font-size:10.5px;font-weight:850;letter-spacing:.5px;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:7px}
+.cue-card p{font-size:15.5px;line-height:1.6;font-weight:600;color:var(--ink)}
+.pickers{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.picker{position:relative;display:flex;align-items:center;gap:6px;padding:10px 12px;
+  border-radius:var(--r-sm);text-align:left;
+  background:rgba(255,255,255,.42);border:1px solid var(--glass-stroke-2);transition:all .3s var(--spring)}
+[data-theme="twilight"] .picker{background:rgba(255,255,255,.08)}
+.picker.on{background:var(--grad-main);box-shadow:0 6px 16px rgba(255,92,168,.35)}
+.picker.on .pk-n{color:#fff}
+.pk-n{flex:1;min-width:0;font-size:12.5px;font-weight:800;line-height:1.25}
+.pk-s{font-size:10.5px;font-weight:700;color:var(--ink-3)}
+.picker.on .pk-s{color:rgba(255,255,255,.85)}
+.pk-c{font-size:12px;color:#fff;opacity:0;transition:opacity .25s}
+.picker.on .pk-c{opacity:1}
+
+/* ---------- session player ---------- */
+body.playing{overflow:hidden}
+#player{position:fixed;inset:0;z-index:150;display:none;overflow-y:auto;
+  background:linear-gradient(170deg,#FFEAF6 0%,#F3E6FF 48%,#E7ECFF 100%);
+  padding:calc(var(--safe-t) + 10px) calc(var(--safe-r) + 18px) calc(var(--safe-b) + 22px) calc(var(--safe-l) + 18px)}
+[data-theme="twilight"] #player{background:linear-gradient(170deg,#2A1038 0%,#1B0F2E 55%,#160B22 100%)}
+#player.on{display:block;animation:plIn .45s var(--ease)}
+@keyframes plIn{from{opacity:0;transform:scale(1.03)}to{opacity:1;transform:none}}
+#playerBody{max-width:520px;margin:0 auto;display:flex;flex-direction:column;min-height:100%}
+.pl-next{margin-bottom:auto}
+.pl-top{display:flex;align-items:center;gap:12px}
+.pl-title{flex:1;text-align:center;font-size:13px;font-weight:850;letter-spacing:.2px;color:var(--ink-2)}
+.pl-count{font-size:12.5px;font-weight:800;color:var(--ink-3);min-width:40px;text-align:right}
+.pl-bar{height:5px;border-radius:3px;background:rgba(155,92,246,.16);margin:12px 0 4px;overflow:hidden}
+.pl-bar i{display:block;height:100%;border-radius:3px;background:var(--grad-main);transition:width .5s var(--ease)}
+.pl-stage{display:grid;place-items:center;padding:4px 0}
+.pl-area{text-align:center;font-size:11px;font-weight:850;letter-spacing:.6px;
+  text-transform:uppercase;color:var(--ink-3);margin-top:6px}
+.pl-name{margin-top:auto;font-size:29px;font-weight:850;letter-spacing:-.6px;text-align:center;margin-top:2px;
+  text-wrap:balance;background:var(--grad-main);-webkit-background-clip:text;background-clip:text;color:transparent}
+[data-theme="twilight"] .pl-name{background:linear-gradient(135deg,#FFB3DE,#D9B3FF 60%,#B9C4FF);
+  -webkit-background-clip:text;background-clip:text}
+.pl-name span{font-size:15px;font-weight:800;-webkit-text-fill-color:var(--ink-3);vertical-align:middle}
+.pl-cue{text-align:center;font-size:16px;line-height:1.62;font-weight:600;color:var(--ink-2);
+  margin:16px auto 0;max-width:420px}
+.pl-clock{position:relative;width:168px;height:168px;margin:16px auto 0}
+.pl-ring{width:100%;height:100%}
+#plRing{transition:stroke-dashoffset .12s linear}
+.pl-sec{position:absolute;inset:0;display:grid;place-items:center;text-align:center;line-height:1}
+.pl-sec b{font-size:46px;font-weight:850;letter-spacing:-2px;font-variant-numeric:tabular-nums;
+  background:var(--grad-main);-webkit-background-clip:text;background-clip:text;color:transparent}
+.pl-sec span{display:block;font-size:10.5px;font-weight:800;color:var(--ink-3);margin-top:4px;letter-spacing:.4px}
+.pl-ctrl{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:20px}
+.pl-btn{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-size:19px;
+  background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);
+  border:1px solid var(--glass-stroke-2);box-shadow:var(--shadow-1),inset 0 1px 0 var(--glass-hi);
+  transition:transform .28s var(--spring)}
+.pl-btn:active{transform:scale(.88)}
+.pl-btn.big{width:74px;height:74px;font-size:26px;background:var(--grad-main);color:#fff;
+  border-color:rgba(255,255,255,.4);box-shadow:0 10px 26px rgba(255,92,168,.45),inset 0 1px 0 rgba(255,255,255,.55)}
+.pl-next{text-align:center;font-size:12.5px;font-weight:700;color:var(--ink-3);margin-top:16px;padding-bottom:6px}
+.pl-done{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  animation:screenIn .6s var(--ease)}
+.pl-done-e{font-size:64px;animation:hop 1s var(--spring)}
+.pl-done h2{font-size:29px;font-weight:850;letter-spacing:-.7px;margin-top:10px;
+  background:var(--grad-main);-webkit-background-clip:text;background-clip:text;color:transparent}
+.pl-done p{font-size:14.5px;color:var(--ink-2);margin-top:8px;font-weight:650}
+
+/* ---------- sync ---------- */
+.sync-dot{position:absolute;top:5px;right:5px;width:9px;height:9px;border-radius:50%;
+  border:1.5px solid rgba(255,255,255,.85);transition:background .3s}
+.sync-dot.idle{background:#B9A6C8}
+.sync-dot.ok{background:#5FD39B}
+.sync-dot.err{background:#FF7A8F}
+.sync-dot.up,.sync-dot.down{background:#7DA0FF;animation:pulse 1s ease-in-out infinite}
+.icon-btn{position:relative}
+
 /* ---------- iPad / large ---------- */
 @media (min-width:768px){
   :root{--tabbar-h:80px}
@@ -691,13 +800,15 @@ textarea.input{resize:none;min-height:120px;line-height:1.5;font-weight:500}
     <h1>🌸 ILIANA'S GARDEN</h1>
     <div class="top-actions">
       <button class="icon-btn" data-act="meow" aria-label="kitty">🐱</button>
-      <button class="icon-btn" data-act="settings" aria-label="settings">⚙️</button>
+      <button class="icon-btn" data-act="settings" aria-label="settings">⚙️
+        <span class="sync-dot idle" id="syncDot" style="display:none"></span></button>
     </div>
   </div>
 
   <main>
     <section class="screen on" id="sc-today"></section>
     <section class="screen" id="sc-habits"></section>
+    <section class="screen" id="sc-stretch"></section>
     <section class="screen" id="sc-garden"></section>
     <section class="screen" id="sc-pets"></section>
     <section class="screen" id="sc-goals"></section>
@@ -711,6 +822,7 @@ textarea.input{resize:none;min-height:120px;line-height:1.5;font-weight:500}
   <div id="tabpill"></div>
   <button class="tab on" data-tab="today"><span class="ic">🏡</span><span class="tx">Today</span></button>
   <button class="tab" data-tab="habits"><span class="ic">🌸</span><span class="tx">Habits</span></button>
+  <button class="tab" data-tab="stretch"><span class="ic">🧘‍♀️</span><span class="tx">Stretch</span></button>
   <button class="tab" data-tab="garden"><span class="ic">🌱</span><span class="tx">Garden</span></button>
   <button class="tab" data-tab="pets"><span class="ic">🐾</span><span class="tx">Pets</span></button>
   <button class="tab" data-tab="goals"><span class="ic">🎯</span><span class="tx">Goals</span></button>
@@ -725,6 +837,8 @@ textarea.input{resize:none;min-height:120px;line-height:1.5;font-weight:500}
   <div class="body" id="sheetBody"></div>
   <div class="foot" id="sheetFoot"></div>
 </div>
+
+<div id="player"><div id="playerBody"></div></div>
 
 <div id="toast"></div>
 
@@ -1374,7 +1488,9 @@ function lineSVG(vals, id = 'l', W = 320) {
     ${dots}</svg>`;
 }
 
-function heatHTML(getVal, weeks = 14) {
+/* isSched(dateKey) lets a part-time habit show its rest days as hollow
+   instead of as misses, so the map reflects real consistency */
+function heatHTML(getVal, weeks = 14, isSched) {
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const end = new Date(today); end.setDate(end.getDate() + (6 - ((today.getDay() + 6) % 7)));
   const cells = weeks * 7;
@@ -1382,12 +1498,14 @@ function heatHTML(getVal, weeks = 14) {
   for (let i = cells - 1; i >= 0; i--) {
     const d = new Date(end); d.setDate(end.getDate() - i);
     const k = dkey(d), v = getVal(k), future = d > today;
-    let bg = 'rgba(155,92,246,.10)';
-    if (v > 0) {
+    const off = isSched && !isSched(k);
+    let style;
+    if (off && !(v > 0)) style = 'background:transparent;box-shadow:inset 0 0 0 1px rgba(155,92,246,.16)';
+    else if (v > 0) {
       const a = Math.min(1, v);
-      bg = `linear-gradient(135deg,rgba(255,124,184,${.30 + a * .70}),rgba(155,92,246,${.30 + a * .70}))`;
-    }
-    out += `<i title="${k}" style="background:${bg};opacity:${future ? .25 : 1}"></i>`;
+      style = `background:linear-gradient(135deg,rgba(255,124,184,${.30 + a * .70}),rgba(155,92,246,${.30 + a * .70}))`;
+    } else style = 'background:rgba(155,92,246,.10)';
+    out += `<i title="${k}${off ? ' · rest day' : ''}" style="${style};opacity:${future ? .25 : 1}"></i>`;
   }
   return out;
 }
@@ -1623,6 +1741,780 @@ const Sound = {
 
 
 /* ============================================================
+   STRETCHES — the library.
+   side:'both' becomes a left rep and a right rep in a routine.
+   ============================================================ */
+const STRETCHES = [
+  { id:'necktilt', n:'Neck Side Tilt', area:'Neck', secs:20, side:'both',
+    cue:'Drop one ear toward your shoulder and let the weight of your hand do the work. Keep the other shoulder down.',
+    why:'Releases the upper trapezius — the muscle that carries your phone-scrolling tension.', },
+
+  { id:'neckturn', n:'Neck Rotation', area:'Neck', secs:18, side:'both',
+    cue:'Turn your head slowly to look over your shoulder. Chin stays level.',
+    why:'Frees the deep rotators either side of the spine.', },
+
+  { id:'chintuck', n:'Chin Tuck', area:'Neck', secs:15, side:'none',
+    cue:'Draw your chin straight back, making a double chin. Hold, then release.',
+    why:'Undoes forward head posture. The single best desk-day reset.', },
+
+  { id:'shoulderroll', n:'Shoulder Rolls', area:'Shoulders', secs:20, side:'none',
+    cue:'Roll both shoulders up, back and down in slow circles. Big and lazy.',
+    why:'Warms the shoulder joint and wakes up the upper back.', },
+
+  { id:'crossarm', n:'Cross-Body Shoulder', area:'Shoulders', secs:22, side:'both',
+    cue:'Bring one arm straight across your chest and hug it closer with the other.',
+    why:'Opens the back of the shoulder and the rear deltoid.', },
+
+  { id:'triceps', n:'Overhead Triceps', area:'Shoulders', secs:22, side:'both',
+    cue:'Reach one hand down your spine, then gently press the elbow back with the other hand.',
+    why:'Lengthens the triceps and the underside of the shoulder.', },
+
+  { id:'chest', n:'Chest Opener', area:'Chest', secs:25, side:'none',
+    cue:'Clasp your hands behind your back, straighten your arms and lift your chest.',
+    why:'Counters everything hunching does to the front of your shoulders.', },
+
+  { id:'eagle', n:'Upper Back Reach', area:'Back', secs:22, side:'none',
+    cue:'Round forward, wrap your arms around yourself and push your upper back away.',
+    why:'Spreads the rhomboids between your shoulder blades.', },
+
+  { id:'sidebody', n:'Side Body Stretch', area:'Back', secs:22, side:'both',
+    cue:'Reach one arm overhead and lean away, keeping both hips level.',
+    why:'Opens the ribs and the lats down your whole side.', },
+
+  { id:'catcow', n:'Cat–Cow', area:'Back', secs:30, side:'none',
+    cue:'On hands and knees, arch your back on the inhale, round it on the exhale. Move slowly.',
+    why:'Mobilises every segment of the spine. The best first move of any routine.', },
+
+  { id:'child', n:"Child's Pose", area:'Back', secs:30, side:'none',
+    cue:'Knees wide, sit back onto your heels and walk your hands forward. Let your forehead rest down.',
+    why:'Decompresses the lower back and quietly calms everything down.', },
+
+  { id:'cobra', n:'Sphinx / Cobra', area:'Back', secs:25, side:'none',
+    cue:'Lie on your front, forearms down, and lift your chest away from the floor.',
+    why:'Extends the lower back the opposite way to sitting all day.', },
+
+  { id:'knees2chest', n:'Knees to Chest', area:'Back', secs:25, side:'none',
+    cue:'On your back, hug both knees in and rock gently side to side.',
+    why:'A soft massage for the lower back and sacrum.', },
+
+  { id:'supinetwist', n:'Supine Twist', area:'Back', secs:28, side:'both',
+    cue:'On your back, drop both knees to one side and turn your head the other way.',
+    why:'Wrings out the spine and stretches the outer hip.', },
+
+  { id:'fold', n:'Standing Forward Fold', area:'Legs', secs:28, side:'none',
+    cue:'Hinge at the hips and hang. Soft knees — let your head be heavy.',
+    why:'Hamstrings, calves and the whole back line at once.', },
+
+  { id:'figure4', n:'Figure-4 Glute', area:'Hips', secs:28, side:'both',
+    cue:'On your back, cross one ankle over the opposite knee and pull that thigh toward you.',
+    why:'The one that finally reaches the deep glute and piriformis.', },
+
+  { id:'pigeon', n:'Pigeon Pose', area:'Hips', secs:32, side:'both',
+    cue:'Front shin across the mat, back leg long behind you. Fold forward over the front leg.',
+    why:'The deepest hip opener here. Breathe and give it time.', },
+
+  { id:'butterfly', n:'Butterfly', area:'Hips', secs:30, side:'none',
+    cue:'Soles of the feet together, knees falling out. Sit tall, then fold a little.',
+    why:'Inner thighs and groin, gently.', },
+
+  { id:'lunge', n:'Low Lunge Hip Flexor', area:'Hips', secs:30, side:'both',
+    cue:'One foot forward, back knee down. Sink your hips and lift your chest.',
+    why:'Opens the hip flexors that sitting keeps short all day.', },
+
+  { id:'frog', n:'Frog Stretch', area:'Hips', secs:28, side:'none',
+    cue:'Knees wide on the floor, shins parallel, rock your hips slowly back.',
+    why:'A serious inner-thigh and hip opener. Go gently.', },
+
+  { id:'happybaby', n:'Happy Baby', area:'Hips', secs:26, side:'none',
+    cue:'On your back, grab the outsides of your feet and pull your knees toward the floor.',
+    why:'Hips, groin and lower back — and it is impossible to do without smiling.', },
+
+  { id:'hamstring', n:'Seated Hamstring', area:'Legs', secs:28, side:'both',
+    cue:'One leg straight, the other tucked in. Hinge forward over the straight leg.',
+    why:'Lengthens the hamstring without straining your back.', },
+
+  { id:'quad', n:'Standing Quad', area:'Legs', secs:25, side:'both',
+    cue:'Catch your ankle behind you and draw the knee down and back. Stand tall.',
+    why:'Front of the thigh — the other half of every hamstring stretch.', },
+
+  { id:'calf', n:'Calf Stretch', area:'Legs', secs:24, side:'both',
+    cue:'Step one foot back, heel pressing down, back leg straight. Lean into a wall.',
+    why:'Calves and achilles — where a lot of walking tightness hides.', },
+
+  { id:'straddle', n:'Wide-Legged Fold', area:'Legs', secs:30, side:'none',
+    cue:'Sit with your legs wide and walk your hands forward between them.',
+    why:'Inner thighs, hamstrings and lower back together.', },
+
+  { id:'ankle', n:'Ankle Circles', area:'Legs', secs:18, side:'both',
+    cue:'Lift one foot and draw slow circles with your toes, both directions.',
+    why:'Ankle mobility — the joint everyone forgets until it complains.', },
+
+  { id:'downdog', n:'Downward Dog', area:'Full body', secs:30, side:'none',
+    cue:'Hands and feet down, hips high. Pedal your heels and let your head hang.',
+    why:'Shoulders, hamstrings, calves and spine in one shape.', },
+
+  { id:'wrist', n:'Wrist Release', area:'Wrists', secs:20, side:'both',
+    cue:'Arm out straight, fingers pointing down, gently pull back with the other hand.',
+    why:'For typing, phones and everything else your hands do all day.', },
+
+  { id:'sidelunge', n:'Side Lunge', area:'Hips', secs:26, side:'both',
+    cue:'Feet wide, bend into one knee and keep the other leg straight.',
+    why:'Inner thigh and groin, standing up.', },
+
+  { id:'rest', n:'Rest & Breathe', area:'Full body', secs:30, side:'none',
+    cue:'Lie flat, arms a little away from your body, palms up. Let everything go heavy.',
+    why:'The part everyone skips. Let your nervous system catch up.', }
+];
+const stretchById = id => STRETCHES.find(s => s.id === id) || STRETCHES[0];
+
+
+/* ============================================================
+   STRETCH — guided routines with a timed player
+   Poses are drawn by a parametric figure: each pose is a set of
+   joint angles (0 = up, 90 = right, 180 = down, -90 = left).
+   ============================================================ */
+
+/* the figure renderer lives in figure2d.js, the poses in poses.js */
+
+/* ---------- routines ---------- */
+const ROUTINES = [
+  { id:'wake',    n:'Wake Up',            e:'🌅', c:'#FFB07C', d:'Ease into the morning',
+    items:['catcow','child','chintuck','necktilt','sidebody','fold','downdog','lunge'] },
+  { id:'bed',     n:'Before Bed',         e:'🌙', c:'#9B5CF6', d:'Wind down and let go',
+    items:['child','knees2chest','supinetwist','figure4','butterfly','happybaby','rest'] },
+  { id:'desk',    n:'Neck & Shoulders',   e:'💻', c:'#7DA0FF', d:'Undo a day at a screen',
+    items:['chintuck','necktilt','neckturn','shoulderroll','crossarm','triceps','chest','wrist'] },
+  { id:'back',    n:'Lower Back Relief',  e:'🌿', c:'#7FD1A8', d:'For an achy back',
+    items:['catcow','child','knees2chest','supinetwist','figure4','cobra','fold'] },
+  { id:'hips',    n:'Happy Hips',         e:'🦋', c:'#E879F9', d:'Open tight hips',
+    items:['lunge','pigeon','figure4','butterfly','frog','sidelunge','happybaby'] },
+  { id:'legs',    n:'Legs & Hamstrings',  e:'🦵', c:'#FF7DB8', d:'Long, loose legs',
+    items:['fold','hamstring','quad','calf','straddle','downdog','ankle'] },
+  { id:'posture', n:'Posture Reset',      e:'🪞', c:'#C77DFF', d:'Stand a little taller',
+    items:['chintuck','chest','eagle','sidebody','catcow','cobra','lunge'] },
+  { id:'quick',   n:'Quick Break',        e:'⏱️', c:'#FFC94A', d:'Three minutes, anywhere',
+    items:['chintuck','shoulderroll','crossarm','sidebody','wrist'] },
+  { id:'full',    n:'Full Body',          e:'✨', c:'#FF5CA8', d:'A bit of everything',
+    items:['catcow','child','downdog','fold','hamstring','lunge','pigeon','sidebody','crossarm','necktilt','rest'] },
+  { id:'deep',    n:'Deep Stretch',       e:'🧘‍♀️', c:'#B47DFF', d:'Long holds, go slow',
+    items:['child','downdog','pigeon','frog','straddle','butterfly','supinetwist','happybaby','figure4','rest'] }
+];
+
+/* expand a routine into the actual timed steps (bilateral moves become two) */
+function buildSteps(items, mult = 1) {
+  const steps = [];
+  items.forEach(id => {
+    const s = stretchById(id);
+    const secs = Math.max(8, Math.round(s.secs * mult));
+    if (s.side === 'both') {
+      steps.push({ s, secs, side: 'Left',  flip: false });
+      steps.push({ s, secs, side: 'Right', flip: true  });
+    } else {
+      steps.push({ s, secs, side: '', flip: false });
+    }
+  });
+  return steps;
+}
+const routineSecs = (items, mult = 1) =>
+  buildSteps(items, mult).reduce((a, x) => a + x.secs, 0);
+const fmtMin = sec => sec >= 60
+  ? `${Math.floor(sec / 60)} min${sec % 60 ? ' ' + (sec % 60) + 's' : ''}`
+  : `${sec}s`;
+
+/* ============================================================
+   SCREEN
+   ============================================================ */
+function stretchState() {
+  if (!S.stretch) S.stretch = { sessions: [], custom: [], mult: 1 };
+  S.stretch.sessions = S.stretch.sessions || [];
+  S.stretch.custom = S.stretch.custom || [];
+  S.stretch.mult = S.stretch.mult || 1;
+  return S.stretch;
+}
+const allRoutines = () => ROUTINES.concat(stretchState().custom);
+const routineById = id => allRoutines().find(r => r.id === id);
+
+function stretchStats() {
+  const st = stretchState(), byDay = {};
+  st.sessions.forEach(s => { byDay[s.d] = (byDay[s.d] || 0) + s.secs; });
+  let streak = 0, d = new Date(); d.setHours(0, 0, 0, 0);
+  if (!byDay[dkey(d)]) d = addD(d, -1);
+  while (byDay[dkey(d)]) { streak++; d = addD(d, -1); }
+  return {
+    byDay, streak,
+    total: st.sessions.reduce((a, s) => a + s.secs, 0),
+    count: st.sessions.length,
+    today: byDay[TODAY()] || 0
+  };
+}
+
+function rStretch() {
+  const st = stretchState(), k = stretchStats();
+  const last7 = [];
+  for (let i = 6; i >= 0; i--) last7.push(Math.round((k.byDay[dkey(addD(new Date(), -i))] || 0) / 60));
+  const multName = { .75: 'Quick', 1: 'Normal', 1.4: 'Long' }[st.mult] || 'Normal';
+
+  const card = (r, i) => {
+    const secs = routineSecs(r.items, st.mult);
+    return `<button class="glass routine" data-act="routine" data-id="${r.id}" style="--i:${i}">
+      <div class="r-emo" style="background:${tint(r.c, .26)}">${r.e}</div>
+      <div class="r-copy">
+        <div class="r-n">${esc(r.n)}</div>
+        <div class="r-d">${esc(r.d)}</div>
+        <div class="r-meta">${fmtMin(secs)} · ${buildSteps(r.items, st.mult).length} moves</div>
+      </div>
+      <span class="r-play">▶</span></button>`;
+  };
+
+  $('#sc-stretch').innerHTML = `<div class="wrap">
+    <div class="hero"><div class="hello">Stretch</div>
+      <div class="sub">A few minutes of looking after your body, ${NAME} 🧘‍♀️</div></div>
+
+    <div class="glass card">
+      <div class="row">
+        <div class="ring-wrap" style="width:88px;height:88px;flex:0 0 auto">
+          ${ringSVG(Math.min(1, k.today / 300), 88, 9, 'str')}
+          <div class="lbl"><div><b style="font-size:18px">${Math.round(k.today / 60)}</b><span>MIN TODAY</span></div></div></div>
+        <div class="grow">
+          <div style="font-weight:850;font-size:16px">${k.today ? 'Nicely done today 💜'
+      : k.streak ? `Keep the streak going, ${NAME}` : 'Shall we stretch?'}</div>
+          <div class="muted" style="margin-top:4px">${k.streak ? `🔥 ${k.streak} day streak · ` : ''}${Math.round(k.total / 60)} min all time</div>
+        </div>
+      </div>
+      <div class="stats" style="margin-top:14px">
+        <div class="stat"><b>${k.count}</b><span>SESSIONS</span></div>
+        <div class="stat"><b>${Math.round(k.total / 60)}</b><span>MINUTES</span></div>
+        <div class="stat"><b>${k.streak}</b><span>🔥 STREAK</span></div>
+      </div>
+      ${k.total ? `<div class="chart-head" style="margin:16px 4px 8px"><h4>Last 7 days</h4>
+        <span class="muted">minutes</span></div>${barsSVG(last7, Math.max(5, ...last7), 'str', cardW())}` : ''}
+    </div>
+
+    <div class="sec-title"><span>Routines</span>
+      <button class="mini seg-mini" data-act="mult">⏱ ${multName} holds</button></div>
+    <div class="routines">${ROUTINES.map(card).join('')}</div>
+
+    <div class="sec-title"><span>Your own routines</span>
+      <span class="mini" data-act="newroutine">＋ Create</span></div>
+    ${st.custom.length ? `<div class="routines">${st.custom.map((r, i) => `
+        <div class="rw">${card(r, i)}<button class="icon-btn rw-x" data-act="delroutine" data-id="${r.id}">🗑</button></div>`).join('')}</div>`
+      : `<div class="glass card empty" style="padding:24px 20px"><div class="art">🧩</div>
+        <h4>Build your own</h4><p>Pick the stretches you actually like and save them as a routine.</p>
+        <button class="btn primary" data-act="newroutine" style="margin-top:14px">＋ New routine</button></div>`}
+
+    <div class="sec-title"><span>All stretches</span><span class="mini">${STRETCHES.length} moves</span></div>
+    <button class="btn wide glass" data-act="library">📖 Browse the whole library</button>
+  </div>`;
+}
+
+/* ---------- library ---------- */
+function librarySheet() {
+  const areas = [...new Set(STRETCHES.map(s => s.area))];
+  openSheet('Stretch library', areas.map(a => `
+    <div class="chart-head" style="margin:14px 2px 10px"><h4>${esc(a)}</h4>
+      <span class="muted">${STRETCHES.filter(s => s.area === a).length}</span></div>
+    <div class="lib">${STRETCHES.filter(s => s.area === a).map(s => `
+      <button class="lib-it glass" data-act="stretchinfo" data-id="${s.id}">
+        <span class="lib-n">${esc(s.n)}</span>
+        <span class="lib-s">${s.secs}s${s.side === 'both' ? ' · each side' : ''}</span>
+        <span class="lib-go">›</span>
+      </button>`).join('')}</div>`).join(''),
+    `<button class="btn primary wide" data-act="close">Done</button>`);
+}
+function stretchInfoSheet(id) {
+  const s = stretchById(id);
+  openSheet(s.n, `
+    <div class="row" style="gap:8px;margin:2px 0 18px;flex-wrap:wrap">
+      <span class="chip">${esc(s.area)}</span><span class="chip">${s.secs}s</span>
+      ${s.side === 'both' ? '<span class="chip">both sides</span>' : ''}</div>
+    <div class="glass card cue-card"><div class="cue-lead">How to do it</div>
+      <p>${esc(s.cue)}</p></div>
+    <div class="chart-head" style="margin-top:20px"><h4>Why it helps</h4></div>
+    <p style="font-size:14px;line-height:1.6;color:var(--ink-2);margin-top:6px">${esc(s.why)}</p>
+  `, `<button class="btn ghost" data-act="library">← Library</button>
+      <button class="btn primary grow" data-act="single" data-id="${s.id}">▶ Stretch this one</button>`);
+}
+
+/* ---------- custom routine builder ---------- */
+let rDraft = null;
+function routineBuilder() {
+  rDraft = { id: 'c' + uid(), n: '', e: '🧘‍♀️', c: COLORS[4], items: [], d: 'My routine', up: Date.now() };
+  const areas = [...new Set(STRETCHES.map(s => s.area))];
+  openSheet('New routine', `
+    <div class="field"><label>NAME IT</label>
+      <input class="input" id="rName" placeholder="My evening wind-down" maxlength="30"></div>
+    <div class="field"><label>PICK AN EMOJI</label>
+      <div class="icons">${['🧘‍♀️','🌙','🌅','💜','🌸','🦋','🔥','⭐','🌿','💫','🩰','🫧']
+      .map(e => `<button data-remo="${e}" class="${e === rDraft.e ? 'on' : ''}">${e}</button>`).join('')}</div></div>
+    <div class="field"><label>CHOOSE YOUR STRETCHES <span id="rCount">(0)</span></label>
+      ${areas.map(a => `<div class="chart-head" style="margin:12px 2px 8px"><h4>${esc(a)}</h4></div>
+        <div class="pickers">${STRETCHES.filter(s => s.area === a).map(s => `
+          <button class="picker" data-pick="${s.id}">
+            <span class="pk-n">${esc(s.n)}</span>
+            <span class="pk-s">${s.secs}s</span><span class="pk-c">✓</span></button>`).join('')}</div>`).join('')}
+    </div>`,
+    `<button class="btn ghost" data-act="close">Cancel</button>
+     <button class="btn primary grow" data-act="saveroutine">Save routine</button>`);
+  $('#sheetBody').addEventListener('click', e => {
+    const em = e.target.closest('[data-remo]');
+    if (em) {
+      rDraft.e = em.dataset.remo; Sound.tick();
+      $$('#sheetBody [data-remo]').forEach(b => b.classList.toggle('on', b.dataset.remo === rDraft.e));
+      return;
+    }
+    const pk = e.target.closest('[data-pick]');
+    if (pk) {
+      const id = pk.dataset.pick, i = rDraft.items.indexOf(id);
+      if (i > -1) rDraft.items.splice(i, 1); else rDraft.items.push(id);
+      pk.classList.toggle('on', i === -1); Sound.tick(); buzz(8);
+      $('#rCount').textContent = `(${rDraft.items.length})`;
+    }
+  });
+}
+
+/* ============================================================
+   PLAYER
+   ============================================================ */
+let PL = null, wakeLock = null;
+
+async function keepAwake(on) {
+  try {
+    if (on && 'wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen');
+    else if (wakeLock) { wakeLock.release(); wakeLock = null; }
+  } catch (e) { /* not supported — harmless */ }
+}
+
+function startSession(routineId, singleId) {
+  const st = stretchState();
+  let steps, title, rid;
+  if (singleId) {
+    steps = buildSteps([singleId], st.mult); title = stretchById(singleId).n; rid = 'single:' + singleId;
+  } else {
+    const r = routineById(routineId); if (!r) return;
+    steps = buildSteps(r.items, st.mult); title = r.n; rid = r.id;
+  }
+  if (!steps.length) { toast('That routine has no stretches yet'); return; }
+  closeSheet();
+  PL = { steps, i: 0, title, rid, paused: false, left: steps[0].secs * 1000, last: performance.now(), done: 0 };
+  $('#player').classList.add('on');
+  document.body.classList.add('playing');
+  keepAwake(true);
+  Sound.chime();
+  drawPlayer(true);
+  clearInterval(PL.timer);
+  PL.timer = setInterval(tickPlayer, 100);
+}
+
+function tickPlayer() {
+  if (!PL) return;
+  const now = performance.now(), dt = now - PL.last; PL.last = now;
+  if (PL.paused) return;
+  const before = Math.ceil(PL.left / 1000);
+  PL.left -= dt;
+  const after = Math.ceil(PL.left / 1000);
+  if (after !== before && after > 0 && after <= 3) Sound.tick();
+  if (PL.left <= 0) { nextStep(true); return; }
+  updateClock();
+}
+
+function nextStep(auto) {
+  if (!PL) return;
+  PL.done += PL.steps[PL.i].secs;
+  if (PL.i >= PL.steps.length - 1) return finishSession();
+  PL.i++;
+  PL.left = PL.steps[PL.i].secs * 1000;
+  PL.last = performance.now();
+  if (auto) { Sound.chime(); buzz(30); }
+  drawPlayer();
+}
+function prevStep() {
+  if (!PL) return;
+  if (PL.left < PL.steps[PL.i].secs * 1000 - 1200) PL.left = PL.steps[PL.i].secs * 1000;
+  else if (PL.i > 0) { PL.i--; PL.left = PL.steps[PL.i].secs * 1000; }
+  PL.last = performance.now(); Sound.pop(); drawPlayer();
+}
+
+function finishSession() {
+  const st = stretchState(), secs = PL.steps.reduce((a, s) => a + s.secs, 0);
+  st.sessions.push({ d: TODAY(), r: PL.rid, secs, at: Date.now() });
+  S.up = Date.now(); save(); pushSync();
+  const total = stretchStats();
+  clearInterval(PL.timer);
+  const title = PL.title;
+  PL = null;
+  keepAwake(false);
+  Sound.chime(); setTimeout(() => Sound.chime(), 240);
+  confetti(innerWidth / 2, innerHeight / 2.2, ['✨', '💜', '🧘‍♀️', '💗', '⭐']);
+  $('#playerBody').innerHTML = `<div class="pl-done">
+      <div class="pl-done-e">🎉</div>
+      <h2>Well done, ${NAME}</h2>
+      <p>${esc(title)} · ${fmtMin(secs)}</p>
+      <div class="stats" style="max-width:340px;margin:22px auto 0">
+        <div class="stat"><b>${Math.round(total.today / 60)}</b><span>MIN TODAY</span></div>
+        <div class="stat"><b>${total.streak}</b><span>🔥 STREAK</span></div>
+        <div class="stat"><b>${total.count}</b><span>SESSIONS</span></div>
+      </div>
+      <button class="btn primary" style="margin-top:26px" data-act="closeplayer">Done 💜</button>
+    </div>`;
+}
+
+function endSession() {
+  if (PL) clearInterval(PL.timer);
+  PL = null; keepAwake(false);
+  $('#player').classList.remove('on');
+  document.body.classList.remove('playing');
+  setTimeout(() => { $('#playerBody').innerHTML = ''; }, 400);
+  rStretch();
+}
+
+function updateClock() {
+  if (!PL) return;
+  const sec = Math.max(0, Math.ceil(PL.left / 1000));
+  const el = $('#plSec'); if (el) el.textContent = sec;
+  const total = PL.steps[PL.i].secs * 1000;
+  const ring = $('#plRing');
+  if (ring) {
+    const c = 2 * Math.PI * 74;
+    ring.style.strokeDashoffset = c * (1 - Math.max(0, PL.left) / total);
+  }
+}
+
+function drawPlayer(first) {
+  if (!PL) return;
+  const step = PL.steps[PL.i], s = step.s;
+  const nxt = PL.steps[PL.i + 1];
+  const c = 2 * Math.PI * 74;
+  $('#playerBody').innerHTML = `
+    <div class="pl-top">
+      <button class="icon-btn" data-act="closeplayer" aria-label="end">✕</button>
+      <div class="pl-title">${esc(PL.title)}</div>
+      <div class="pl-count">${PL.i + 1}/${PL.steps.length}</div>
+    </div>
+    <div class="pl-bar"><i style="width:${(PL.i / PL.steps.length) * 100}%"></i></div>
+
+    <h2 class="pl-name">${esc(s.n)}${step.side ? ` <span>${step.side}</span>` : ''}</h2>
+    <div class="pl-area">${esc(s.area)}</div>
+    <p class="pl-cue">${esc(s.cue)}</p>
+
+    <div class="pl-clock">
+      <svg viewBox="0 0 168 168" class="pl-ring">
+        <circle cx="84" cy="84" r="74" fill="none" stroke="rgba(155,92,246,.18)" stroke-width="10"/>
+        <circle id="plRing" cx="84" cy="84" r="74" fill="none" stroke="url(#plG)" stroke-width="10"
+          stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="0"
+          transform="rotate(-90 84 84)"/>
+        <defs><linearGradient id="plG" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#FF7DB8"/><stop offset="55%" stop-color="#C77DFF"/>
+          <stop offset="100%" stop-color="#9B7DFF"/></linearGradient></defs>
+      </svg>
+      <div class="pl-sec"><b id="plSec">${step.secs}</b><span>seconds</span></div>
+    </div>
+
+    <div class="pl-ctrl">
+      <button class="pl-btn" data-act="plprev" aria-label="previous">⏮</button>
+      <button class="pl-btn big" data-act="plpause" aria-label="pause">${PL.paused ? '▶' : '⏸'}</button>
+      <button class="pl-btn" data-act="plnext" aria-label="skip">⏭</button>
+    </div>
+    <div class="pl-next">${nxt ? `Next: ${esc(nxt.s.n)}${nxt.side ? ' · ' + nxt.side : ''}` : 'Last one — finish strong 💜'}</div>`;
+  updateClock();
+}
+
+
+/* ============================================================
+   SYNC — iPhone ⇄ iPad
+   The data is encrypted on the device before it ever leaves.
+   The key lives in the sync link's #fragment, which browsers
+   never send to a server, so the host only ever stores
+   ciphertext it cannot read.
+   ============================================================ */
+const SYNC_API = 'https://jsonblob.com/api/jsonBlob';
+const SKEY = 'iliana-sync-v1';
+
+let syncCfg = null;          // {id, key}
+let syncBusy = false, pushT = null, lastPushed = '';
+
+function loadSync() {
+  try { syncCfg = JSON.parse(localStorage.getItem(SKEY)) || null; } catch (e) { syncCfg = null; }
+  return syncCfg;
+}
+function saveSync(c) {
+  syncCfg = c;
+  if (c) localStorage.setItem(SKEY, JSON.stringify(c));
+  else localStorage.removeItem(SKEY);
+}
+
+/* ---- crypto ---- */
+const b64u = buf => btoa(String.fromCharCode(...new Uint8Array(buf)))
+  .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const unb64u = s => {
+  s = s.replace(/-/g, '+').replace(/_/g, '/');
+  const bin = atob(s + '==='.slice((s.length + 3) % 4));
+  return Uint8Array.from(bin, c => c.charCodeAt(0));
+};
+const importKey = raw => crypto.subtle.importKey('raw', raw, 'AES-GCM', false, ['encrypt', 'decrypt']);
+
+async function encryptState(obj, keyB64) {
+  const key = await importKey(unb64u(keyB64));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const data = new TextEncoder().encode(JSON.stringify(obj));
+  const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, data);
+  return { v: 1, iv: b64u(iv), d: b64u(ct) };
+}
+async function decryptState(blob, keyB64) {
+  const key = await importKey(unb64u(keyB64));
+  const pt = await crypto.subtle.decrypt(
+    { name: 'AES-GCM', iv: unb64u(blob.iv) }, key, unb64u(blob.d));
+  return JSON.parse(new TextDecoder().decode(pt));
+}
+
+/* ============================================================
+   MERGE — never let one device silently wipe the other.
+   Items merge by id using their `up` stamp; deletions are
+   remembered as tombstones so they don't come back.
+   ============================================================ */
+function mergeState(local, remote) {
+  if (!remote || typeof remote !== 'object') return local;
+  const out = JSON.parse(JSON.stringify(local));
+  const tomb = Object.assign({}, remote.deleted || {}, local.deleted || {});
+  Object.keys(remote.deleted || {}).forEach(id => {
+    const a = (local.deleted || {})[id] || 0, b = remote.deleted[id];
+    tomb[id] = Math.max(a, b);
+  });
+  out.deleted = tomb;
+  const alive = x => !(tomb[x.id] && tomb[x.id] >= (x.up || 0));
+
+  const byId = (a = [], b = []) => {
+    const m = new Map();
+    a.forEach(x => m.set(x.id, x));
+    b.forEach(x => {
+      const cur = m.get(x.id);
+      if (!cur || (x.up || 0) > (cur.up || 0)) m.set(x.id, x);
+    });
+    return [...m.values()].filter(alive);
+  };
+
+  /* habits: merge the row, then merge each day of the log by its own stamp */
+  out.habits = byId(local.habits, remote.habits).map(h => {
+    const l = (local.habits || []).find(x => x.id === h.id);
+    const r = (remote.habits || []).find(x => x.id === h.id);
+    const log = {}, logUp = {};
+    [l, r].forEach(src => {
+      if (!src) return;
+      Object.keys(src.log || {}).forEach(k => {
+        const u = (src.logUp || {})[k] || 0;
+        if (!(k in log) || u > (logUp[k] || 0)) { log[k] = src.log[k]; logUp[k] = u; }
+      });
+    });
+    return Object.assign({}, h, { log, logUp });
+  });
+
+  out.goals = byId(local.goals, remote.goals);
+  out.notes = byId(local.notes, remote.notes).map(n => Object.assign({}, n, { up: n.up || 0 }));
+
+  /* garden: waterings only ever get added, so keep the union */
+  const lp = (local.garden || {}).pots || [], rp = (remote.garden || {}).pots || [];
+  out.garden = Object.assign({}, local.garden);
+  out.garden.pots = byId(lp, rp).map(p => {
+    const l = lp.find(x => x.id === p.id), r = rp.find(x => x.id === p.id);
+    const water = [...new Set([...(l ? l.water : []), ...(r ? r.water : [])])].sort();
+    return Object.assign({}, p, { water, love: Math.max((l || {}).love || 0, (r || {}).love || 0) });
+  });
+  out.garden.harvested = {};
+  [(local.garden || {}).harvested || {}, (remote.garden || {}).harvested || {}].forEach(h =>
+    Object.keys(h).forEach(k => out.garden.harvested[k] = Math.max(out.garden.harvested[k] || 0, h[k])));
+  out.garden.seenFirst = !!((local.garden || {}).seenFirst || (remote.garden || {}).seenFirst);
+
+  /* pets: whichever device played most recently wins, affection takes the max */
+  out.pets = Object.assign({}, local.pets);
+  Object.keys(remote.pets || {}).forEach(id => {
+    const l = (local.pets || {})[id], r = remote.pets[id];
+    if (!l) { out.pets[id] = r; return; }
+    out.pets[id] = {
+      aff: Math.max(l.aff || 0, r.aff || 0),
+      last: (l.last || '') > (r.last || '') ? l.last : r.last,
+      fed: (l.fed || '') > (r.fed || '') ? l.fed : r.fed,
+      plays: Math.max(l.plays || 0, r.plays || 0)
+    };
+  });
+
+  /* stretch sessions: union by timestamp, custom routines by id */
+  const ls = (local.stretch || {}), rs = (remote.stretch || {});
+  const seen = new Set();
+  const sessions = [...(ls.sessions || []), ...(rs.sessions || [])].filter(s => {
+    const k = s.at + '|' + s.r; if (seen.has(k)) return false; seen.add(k); return true;
+  }).sort((a, b) => a.at - b.at);
+  out.stretch = {
+    sessions,
+    custom: byId(ls.custom || [], rs.custom || []),
+    mult: (ls.up || 0) >= (rs.up || 0) ? (ls.mult || 1) : (rs.mult || 1),
+    up: Math.max(ls.up || 0, rs.up || 0)
+  };
+
+  out.visits = Math.max(local.visits || 0, remote.visits || 0);
+  out.settings = (local.settingsUp || 0) >= (remote.settingsUp || 0) ? local.settings : remote.settings;
+  out.settingsUp = Math.max(local.settingsUp || 0, remote.settingsUp || 0);
+  out.hairNudge = Math.max(local.hairNudge || 0, remote.hairNudge || 0);
+  return out;
+}
+
+/* ---- what actually travels ---- */
+const syncPayload = () => ({
+  v: 1, up: Date.now(),
+  habits: S.habits, goals: S.goals, notes: S.notes,
+  garden: S.garden, pets: S.pets, stretch: S.stretch,
+  settings: S.settings, settingsUp: S.settingsUp || 0,
+  visits: S.visits, hairNudge: S.hairNudge || 0, deleted: S.deleted || {}
+});
+
+/* ---- push (debounced) ---- */
+function pushSync(now) {
+  if (!syncCfg) return;
+  clearTimeout(pushT);
+  pushT = setTimeout(async () => {
+    if (!syncCfg || syncBusy) return;
+    const payload = syncPayload();
+    const sig = JSON.stringify(payload).replace(/"up":\d+/g, '');
+    if (sig === lastPushed) return;                       // nothing actually changed
+    syncBusy = true; syncDot('up');
+    try {
+      const body = await encryptState(payload, syncCfg.key);
+      const r = await fetch(SYNC_API + '/' + syncCfg.id, {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+      });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      lastPushed = sig;
+      syncCfg.at = Date.now(); saveSync(syncCfg); syncDot('ok');
+    } catch (e) { syncDot('err'); }
+    syncBusy = false;
+  }, now ? 0 : 1800);
+}
+
+/* ---- pull + merge ---- */
+async function pullSync(loud) {
+  if (!syncCfg) return false;
+  syncDot('down');
+  try {
+    const r = await fetch(SYNC_API + '/' + syncCfg.id, { headers: { Accept: 'application/json' } });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const blob = await r.json();
+    if (!blob || !blob.d) { syncDot('ok'); return false; }
+    const remote = await decryptState(blob, syncCfg.key);
+    const before = JSON.stringify(syncPayload()).replace(/"up":\d+/g, '');
+    const merged = mergeState(S, remote);
+    Object.assign(S, merged);
+    save();
+    const after = JSON.stringify(syncPayload()).replace(/"up":\d+/g, '');
+    syncCfg.at = Date.now(); saveSync(syncCfg); syncDot('ok');
+    if (before !== after) { render(); if (loud) toast('Synced — brought in changes 🔄'); }
+    else if (loud) toast('Already up to date 💜');
+    if (before !== after) pushSync(true);                 // share the merged result back
+    return true;
+  } catch (e) {
+    syncDot('err');
+    if (loud) toast('Couldn\'t reach sync — check the connection ☁️');
+    return false;
+  }
+}
+
+/* ---- first-time setup ---- */
+async function createSync() {
+  syncDot('up');
+  const key = b64u(crypto.getRandomValues(new Uint8Array(32)));
+  const body = await encryptState(syncPayload(), key);
+  const r = await fetch(SYNC_API, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+  });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  const id = (r.headers.get('location') || '').split('/').pop();
+  if (!id) throw new Error('no id');
+  saveSync({ id, key, at: Date.now() });
+  syncDot('ok');
+  return syncCfg;
+}
+async function joinSync(id, key) {
+  saveSync({ id, key, at: 0 });
+  const ok = await pullSync(false);
+  if (!ok) { saveSync(null); throw new Error('could not read that code'); }
+  await pushSync(true);
+  return true;
+}
+
+const syncLink = () => location.origin + location.pathname + '#sync=' + syncCfg.id + '.' + syncCfg.key;
+const syncCode = () => syncCfg.id + '.' + syncCfg.key;
+
+/* a link opened on the second device sets everything up automatically */
+async function consumeSyncHash() {
+  const m = (location.hash || '').match(/sync=([^.&]+)\.([^&]+)/);
+  if (!m) return;
+  history.replaceState(null, '', location.pathname + location.search);
+  if (syncCfg && syncCfg.id === m[1]) return;
+  try {
+    toast('Linking this device… 🔗');
+    await joinSync(m[1], m[2]);
+    render(); toast(`Synced! This device is linked now, ${NAME} 💜`, 3200); Sound.chime();
+  } catch (e) { toast('That sync link didn\'t work 😿'); }
+}
+
+/* ---- the little status dot in the top bar ---- */
+let dotT = null;
+function syncDot(state) {
+  const el = $('#syncDot'); if (!el) return;
+  el.className = 'sync-dot ' + state;
+  el.style.display = syncCfg ? 'block' : 'none';
+  clearTimeout(dotT);
+  if (state === 'ok' || state === 'err') dotT = setTimeout(() => { el.className = 'sync-dot idle'; }, 2200);
+}
+
+/* ---- settings UI ---- */
+function syncSheet() {
+  const on = !!syncCfg;
+  openSheet('Sync 🔗', on ? `
+    <div class="glass card" style="text-align:center;padding:22px">
+      <div style="font-size:34px">📱💜📱</div>
+      <div style="font-weight:850;font-size:17px;margin-top:8px">Sync is on</div>
+      <div class="muted" style="margin-top:4px">
+        ${syncCfg.at ? 'Last synced ' + new Date(syncCfg.at).toLocaleString() : 'Not synced yet'}</div>
+    </div>
+    <div class="glass card" style="padding:14px 16px;margin-top:14px">
+      <div style="font-weight:850;font-size:13.5px;margin-bottom:6px">📱 On your iPad, do this once</div>
+      <div class="muted" style="line-height:1.6">Open the app there → <b>⚙️ Settings → Sync</b> →
+        paste the code below into “already have a code” → <b>Link this device</b>.</div>
+    </div>
+    <div class="field" style="margin-top:16px"><label>SYNC CODE — PASTE THIS ON YOUR OTHER DEVICE</label>
+      <textarea class="input" id="syncCodeBox" readonly rows="3"
+        style="min-height:0;font-size:12px;font-family:ui-monospace,monospace">${esc(syncCode())}</textarea></div>
+    <button class="btn primary wide" data-act="copycode" style="margin-top:6px">📋 Copy the code</button>
+    ${location.protocol === 'file:' ? '' : `
+      <p class="muted" style="margin:18px 2px 8px;line-height:1.6">
+        Or send yourself this link — but only if you open the app in <b>Safari</b> on the other
+        device. A link can't reach an app you've added to the Home Screen, so use the code for that.</p>
+      <div class="field"><input class="input" id="syncLinkBox" readonly value="${esc(syncLink())}"></div>
+      <div class="row" style="gap:10px">
+        <button class="btn grow" data-act="copysync">🔗 Copy link</button>
+        <button class="btn grow" data-act="sharesync">📤 Share</button>
+      </div>`}
+    <button class="btn wide" data-act="syncnow" style="margin-top:14px">🔄 Sync now</button>
+    <button class="btn wide ghost danger" data-act="syncoff" style="margin-top:10px">Turn sync off on this device</button>
+  ` : `
+    <div class="glass card" style="text-align:center;padding:24px">
+      <div style="font-size:34px">📱 ⇄ 📱</div>
+      <div style="font-weight:850;font-size:17px;margin-top:10px">Use it on both devices</div>
+      <p class="muted" style="margin-top:8px;line-height:1.6">
+        Turn this on once, open the link on your other device, and your habits, garden, pets,
+        goals, notes and stretches stay in step on both.</p>
+    </div>
+    <p class="muted" style="margin:16px 2px;line-height:1.6">
+      🔒 Your data is encrypted on this device first — the key only ever travels inside the
+      link, never to the server. Without your link, what's stored is unreadable.</p>
+    <button class="btn primary wide" data-act="syncon">🔗 Turn on sync</button>
+    <div class="field" style="margin-top:20px"><label>ALREADY HAVE A CODE FROM YOUR OTHER DEVICE?</label>
+      <textarea class="input" id="syncJoinBox" rows="3" placeholder="paste the sync code here"
+        style="min-height:0;font-size:12px;font-family:ui-monospace,monospace"></textarea></div>
+    <button class="btn wide" data-act="syncjoin">Link this device</button>
+  `, `<button class="btn primary wide" data-act="close">Done</button>`);
+}
+
+
+/* ============================================================
    APP — state, screens, interactions
    ============================================================ */
 
@@ -1659,9 +2551,14 @@ const DEFAULTS = () => ({
   v: 1, habits: [], goals: [], notes: [],
   garden: { pots: [], harvested: {}, seenFirst: false, can: 0 },
   pets: {},
+  stretch: { sessions: [], custom: [], mult: 1 },
   settings: { sound: true, theme: null },     // null = follow the system
+  settingsUp: 0, deleted: {},                 // tombstones so sync can't resurrect deletions
   visits: 0, bubuIdx: 0
 });
+/* mark an item as edited (sync merges by this) */
+const stamp = o => { o.up = Date.now(); return o; };
+const tombstone = id => { S.deleted = S.deleted || {}; S.deleted[id] = Date.now(); };
 let S = DEFAULTS();
 
 function load() {
@@ -1670,6 +2567,8 @@ function load() {
     if (raw) S = Object.assign(DEFAULTS(), JSON.parse(raw));
     S.garden = Object.assign({ pots: [], harvested: {}, seenFirst: false, can: 0 }, S.garden);
     S.pets = S.pets || {};
+    S.stretch = Object.assign({ sessions: [], custom: [], mult: 1 }, S.stretch);
+    S.deleted = S.deleted || {};
     S.settings = Object.assign({ sound: true, theme: null }, S.settings);
   } catch (e) { S = DEFAULTS(); }
 }
@@ -1679,6 +2578,7 @@ function save() {
   saveT = setTimeout(() => {
     try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { }
   }, 120);
+  if (typeof pushSync === 'function') pushSync();
 }
 
 /* ---------- habit maths ---------- */
@@ -1830,21 +2730,35 @@ let TAB = 'today';
 
 function render() {
   $$('.screen').forEach(s => s.classList.toggle('on', s.id === 'sc-' + TAB));
-  ({ today: rToday, habits: rHabits, garden: rGarden, pets: rPets, goals: rGoals, notes: rNotes })[TAB]();
-  /* the garden and pets have their own buttons — no floating one to collide with them */
+  ({ today: rToday, habits: rHabits, stretch: rStretch, garden: rGarden,
+     pets: rPets, goals: rGoals, notes: rNotes })[TAB]();
+  /* these screens have their own buttons — no floating one to collide with them */
   const fab = $('#fab');
-  fab.style.display = ['today', 'pets', 'garden'].includes(TAB) ? 'none' : 'grid';
+  fab.style.display = ['today', 'pets', 'garden', 'stretch'].includes(TAB) ? 'none' : 'grid';
   movePill();
 }
 function allDoneToday() {
   const t = todayHabits();
   return t.length > 0 && t.every(h => isDone(h, TODAY()));
 }
-function movePill() {
+/* the tabs resize with a spring, so track the active one until it settles */
+let pillRAF = 0;
+function movePill(track) {
   const on = $('.tab.on'), pill = $('#tabpill');
-  if (!on) return;
+  if (!on || !pill) return;
   pill.style.left = on.offsetLeft + 'px';
   pill.style.width = on.offsetWidth + 'px';
+  if (track) {
+    cancelAnimationFrame(pillRAF);
+    const t0 = performance.now();
+    const follow = now => {
+      const el = $('.tab.on'); if (!el) return;
+      pill.style.left = el.offsetLeft + 'px';
+      pill.style.width = el.offsetWidth + 'px';
+      if (now - t0 < 620) pillRAF = requestAnimationFrame(follow);
+    };
+    pillRAF = requestAnimationFrame(follow);
+  }
 }
 
 /* ---------------- TODAY ---------------- */
@@ -1985,20 +2899,31 @@ function quickPeek() {
 }
 
 /* ---------------- HABITS ---------------- */
+const perWeek = h => h.days.filter(Boolean).length;
+/* only the days this habit is actually meant to happen get a box —
+   a 3-days-a-week habit shows 3, not 7 with four permanent gaps */
+function weekStrip(h) {
+  let out = '';
+  for (let i = 6; i >= 0; i--) {
+    const d = addD(new Date(), -i);
+    if (!scheduled(h, d)) continue;
+    const kk = dkey(d);
+    out += `<i class="${isDone(h, kk) ? 'f' : ''} ${i === 0 ? 't' : ''}" title="${DOW[dowIdx(d)]}"></i>`;
+  }
+  return out;
+}
+
 function habitRow(h, idx = 0) {
   const k = TODAY(), c = cnt(h, k), done = isDone(h, k), s = streak(h);
-  let wk = '';
-  for (let i = 6; i >= 0; i--) {
-    const d = addD(new Date(), -i), kk = dkey(d);
-    wk += `<i class="${isDone(h, kk) ? 'f' : ''} ${i === 0 ? 't' : ''}"></i>`;
-  }
+  const pw = perWeek(h);
   return `<div class="glass habit" data-act="habit" data-id="${h.id}" style="--i:${idx}">
     <div class="emo" style="background:${tint(h.color, .25)}">${h.icon}</div>
     <div class="grow">
       <div class="nm">${esc(h.name)}</div>
-      <div class="meta">${s > 0 ? `<span>🔥 ${s} day${s > 1 ? 's' : ''}</span>` : '<span>start today ✨</span>'}
+      <div class="meta">${s > 0 ? `<span>🔥 ${s}</span>` : '<span>start today ✨</span>'}
+        ${pw < 7 ? `<span>· ${pw}× a week</span>` : ''}
         ${h.target > 1 ? `<span>· ${c}/${h.target} ${esc(h.unit || '')}</span>` : ''}</div>
-      <div class="week">${wk}</div>
+      <div class="week">${weekStrip(h)}</div>
     </div>
     <button class="tick ${done ? 'done' : ''}" data-act="tick" data-id="${h.id}" aria-label="complete">
       ${done ? `<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`
@@ -2012,24 +2937,27 @@ function rHabits() {
   const todayPct = todayHabits().length
     ? Math.round(todayHabits().filter(h => isDone(h, TODAY())).length / todayHabits().length * 100) : 0;
 
-  let last7 = [];
+  /* only plot days that actually had something scheduled — a rest day
+     isn't a 0% day, and shouldn't drag the line down */
+  const week = [];
   for (let i = 6; i >= 0; i--) {
     const d = addD(new Date(), -i);
     const sc = live.filter(h => scheduled(h, d) && dkey(d) >= h.created);
-    last7.push(sc.length ? sc.filter(h => isDone(h, dkey(d))).length / sc.length * 100 : 0);
+    if (!sc.length) continue;
+    week.push({ d, pct: sc.filter(h => isDone(h, dkey(d))).length / sc.length * 100 });
   }
+  const last7 = week.map(x => x.pct);
 
   $('#sc-habits').innerHTML = `<div class="wrap">
     <div class="hero"><div class="hello">Habits</div>
       <div class="sub">Small ripples make big waves, ${NAME} 🌊</div></div>
 
     ${live.length ? `<div class="glass card chart-card">
-      <div class="chart-head"><h4>This week's momentum</h4><span class="muted">${todayPct}% today</span></div>
-      ${lineSVG(last7, 'wk', cardW())}
-      <div class="dayrow" style="margin-top:8px">${[...Array(7)].map((_, i) => {
-        const d = addD(new Date(), -(6 - i));
-        return `<div class="d"><div class="n">${DOW[dowIdx(d)][0]}</div></div>`;
-      }).join('')}</div>
+      ${last7.length > 1 ? `
+        <div class="chart-head"><h4>This week's momentum</h4><span class="muted">${todayPct}% today</span></div>
+        ${lineSVG(last7, 'wk', cardW())}
+        <div class="dayrow" style="margin-top:8px">${week.map(x =>
+          `<div class="d"><div class="n">${DOW[dowIdx(x.d)][0]}</div></div>`).join('')}</div>` : ''}
       <div class="stats">
         <div class="stat"><b>${live.length}</b><span>HABITS</span></div>
         <div class="stat"><b>${totalStreak}</b><span>STREAK DAYS</span></div>
@@ -2050,14 +2978,24 @@ function rHabits() {
 }
 
 function habitDetail(h) {
+  /* charts only count the days this habit is scheduled for, so a
+     3-days-a-week habit isn't punished for its four days off */
   const bars = [], keys = [];
-  for (let i = 29; i >= 0; i--) { const d = addD(new Date(), -i); keys.push(dkey(d)); bars.push(cnt(h, dkey(d))); }
-  const s = streak(h), best = bestStreak(h), r = rate(h);
-  const dayrow = [...Array(7)].map((_, i) => {
-    const d = addD(new Date(), -(6 - i)), k = dkey(d);
-    return `<div class="d"><div class="n">${DOW[dowIdx(d)][0]}</div>
-      <div class="o ${isDone(h, k) ? 'f' : ''} ${i === 6 ? 'today' : ''}">${pkey(k).getDate()}</div></div>`;
-  }).join('');
+  for (let i = 29; i >= 0; i--) {
+    const d = addD(new Date(), -i);
+    if (!scheduled(h, d)) continue;
+    keys.push(dkey(d)); bars.push(cnt(h, dkey(d)));
+  }
+  const s = streak(h), best = bestStreak(h), r = rate(h), pw = perWeek(h);
+  const week = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = addD(new Date(), -i);
+    if (scheduled(h, d)) week.push({ d, k: dkey(d), today: i === 0 });
+  }
+  const dayrow = week.map(x =>
+    `<div class="d"><div class="n">${DOW[dowIdx(x.d)][0]}</div>
+      <div class="o ${isDone(h, x.k) ? 'f' : ''} ${x.today ? 'today' : ''}">${pkey(x.k).getDate()}</div></div>`
+  ).join('');
 
   openSheet(`${h.icon} ${esc(h.name)}`, `
     <div style="display:flex;align-items:center;gap:16px;margin-bottom:18px">
@@ -2080,15 +3018,18 @@ function habitDetail(h) {
       <div class="stat"><b>${r}%</b><span>30-DAY</span></div>
     </div>
 
-    <div class="chart-head"><h4>This week</h4></div>
+    <div class="chart-head"><h4>This week</h4>
+      <span class="muted">${pw < 7 ? `${week.length} of your ${pw} days` : 'every day'}</span></div>
     <div class="dayrow" style="margin-bottom:20px">${dayrow}</div>
 
-    <div class="chart-head"><h4>Last 30 days</h4><span class="muted">${pretty(keys[0])} – ${pretty(keys[29])}</span></div>
+    <div class="chart-head"><h4>${pw < 7 ? 'Your last ' + bars.length + ' days' : 'Last 30 days'}</h4>
+      <span class="muted">${keys.length ? pretty(keys[0]) + ' – ' + pretty(keys[keys.length - 1]) : ''}</span></div>
     ${barsSVG(bars, h.target, h.id.slice(0, 4), sheetW())}
 
     <div class="chart-head" style="margin-top:22px"><h4>Consistency</h4><span class="muted">${totalDone(h)} total</span></div>
-    <div class="heat">${heatHTML(k => ratio(h, k), 14)}</div>
-    <div class="legend">less <i style="background:rgba(155,92,246,.10)"></i>
+    <div class="heat">${heatHTML(k => ratio(h, k), 14, k => scheduled(h, pkey(k)))}</div>
+    <div class="legend">${pw < 7 ? '<i style="background:transparent;box-shadow:inset 0 0 0 1px rgba(155,92,246,.18)"></i> rest day &nbsp;' : ''}
+      less <i style="background:rgba(155,92,246,.10)"></i>
       <i style="background:linear-gradient(135deg,rgba(255,124,184,.5),rgba(155,92,246,.5))"></i>
       <i style="background:linear-gradient(135deg,#FF7CB8,#9B5CF6)"></i> more</div>
 
@@ -2623,6 +3564,8 @@ function settingsSheet() {
         <div class="sw ${S.settings.sound ? 'on' : ''}" data-act="tsound"><i></i></div></div>
       <div class="li"><span class="t">🌙 Twilight mode</span>
         <div class="sw ${theme() === 'twilight' ? 'on' : ''}" data-act="ttheme"><i></i></div></div>
+      <div class="li" data-act="sync"><span class="t">🔗 Sync with my other device</span>
+        <span class="muted">${loadSync() ? 'On ✓' : 'Off'}</span><span>›</span></div>
       <div class="li" data-act="meow"><span class="t">🐱 Say hello to the kitty</span><span>›</span></div>
       <div class="li" data-act="export"><span class="t">📤 Back up my data</span><span>›</span></div>
       <div class="li" data-act="import"><span class="t">📥 Restore from a backup</span><span>›</span></div>
@@ -2683,6 +3626,7 @@ function closeSheet() {
 function tickHabit(id, x, y) {
   const h = S.habits.find(h => h.id === id); if (!h) return;
   const k = TODAY(), was = isDone(h, k);
+  h.logUp = h.logUp || {}; h.logUp[k] = Date.now(); stamp(h);
   if (was) { h.log[k] = 0; Sound.tick(); toast('Reset for today'); }
   else {
     h.log[k] = cnt(h, k) + 1;
@@ -2714,7 +3658,7 @@ document.addEventListener('click', e => {
     case 'savehabit': {
       const n = $('#hName').value.trim();
       if (!n) { toast('Give it a name first 💭'); $('#hName').focus(); return; }
-      draft.name = n; draft.unit = $('#hUnit').value.trim();
+      draft.name = n; draft.unit = $('#hUnit').value.trim(); stamp(draft);
       const i = S.habits.findIndex(h => h.id === draft.id);
       if (i > -1) S.habits[i] = Object.assign(S.habits[i], draft);
       else { S.habits.push(draft); confetti(x, y); Sound.chime(); }
@@ -2722,18 +3666,97 @@ document.addEventListener('click', e => {
     }
     case 'delhabit':
       if (confirm('Delete this habit and its history?')) {
+        tombstone(id);
         S.habits = S.habits.filter(h => h.id !== id); save(); closeSheet(); render(); toast('Deleted');
       } break;
     case 'archive': {
-      const h = S.habits.find(h => h.id === id); h.archived = !h.archived;
+      const h = S.habits.find(h => h.id === id); h.archived = !h.archived; stamp(h);
       save(); closeSheet(); render(); toast(h.archived ? 'Archived 📥' : 'Restored ↩︎'); break;
     }
     case 'inc': case 'dec': {
       const h = S.habits.find(h => h.id === id), k = TODAY();
       h.log[k] = Math.max(0, cnt(h, k) + (a === 'inc' ? 1 : -1));
+      h.logUp = h.logUp || {}; h.logUp[k] = Date.now(); stamp(h);
       if (a === 'inc' && isDone(h, k)) { confetti(x, y); Sound.chime(); } else Sound.pop();
       save(); habitDetail(h); render(); break;
     }
+
+    /* ---- stretch ---- */
+    case 'routine': startSession(id); break;
+    case 'single': startSession(null, id); break;
+    case 'library': librarySheet(); Sound.pop(); break;
+    case 'stretchinfo': stretchInfoSheet(id); Sound.pop(); break;
+    case 'newroutine': routineBuilder(); Sound.pop(); break;
+    case 'saveroutine': {
+      const n = $('#rName').value.trim();
+      if (!n) { toast('Give your routine a name 💭'); $('#rName').focus(); return; }
+      if (!rDraft.items.length) { toast('Pick at least one stretch 🧘‍♀️'); return; }
+      rDraft.n = n; rDraft.d = `${rDraft.items.length} stretches`; stamp(rDraft);
+      stretchState().custom.push(rDraft);
+      S.stretch.up = Date.now(); save(); closeSheet(); rStretch();
+      confetti(x, y, ['🧘‍♀️', '✨', '💜']); Sound.chime(); toast('Routine saved 💜'); break;
+    }
+    case 'delroutine':
+      if (confirm('Delete this routine?')) {
+        tombstone(id);
+        S.stretch.custom = S.stretch.custom.filter(r => r.id !== id);
+        S.stretch.up = Date.now(); save(); rStretch(); toast('Deleted');
+      } break;
+    case 'mult': {
+      const opts = [.75, 1, 1.4], st = stretchState();
+      st.mult = opts[(opts.indexOf(st.mult) + 1) % opts.length];
+      st.up = Date.now(); save(); rStretch(); Sound.tick();
+      toast(`Holds set to ${{ .75: 'Quick', 1: 'Normal', 1.4: 'Long' }[st.mult]} ⏱`); break;
+    }
+    case 'plpause': PL.paused = !PL.paused; PL.last = performance.now();
+      t.textContent = PL.paused ? '▶' : '⏸'; Sound.tick(); break;
+    case 'plnext': nextStep(false); Sound.pop(); break;
+    case 'plprev': prevStep(); break;
+    case 'closeplayer': endSession(); break;
+
+    /* ---- sync ---- */
+    case 'sync': syncSheet(); break;
+    case 'syncon':
+      toast('Setting up sync… 🔗');
+      createSync().then(() => { syncSheet(); Sound.chime(); toast('Sync is on! Now open the link on your other device 💜', 3400); })
+        .catch(() => toast('Couldn\'t start sync — check the connection ☁️'));
+      break;
+    case 'syncjoin': {
+      /* be forgiving: codes get pasted with spaces, line breaks or the whole link */
+      const v = ($('#syncJoinBox').value || '').replace(/\s+/g, '');
+      const m = v.match(/([0-9a-f-]{8,})\.([A-Za-z0-9_-]{20,})/);
+      if (!m) { toast('That code doesn\'t look right 💭'); return; }
+      toast('Linking… 🔗');
+      joinSync(m[1], m[2]).then(() => { render(); syncSheet(); Sound.chime(); toast('Linked! 💜'); })
+        .catch(() => toast('Couldn\'t read that code 😿'));
+      break;
+    }
+    case 'syncnow': pullSync(true); break;
+    case 'copysync': {
+      const box = $('#syncLinkBox'); box.select(); box.setSelectionRange(0, 99999);
+      (navigator.clipboard ? navigator.clipboard.writeText(syncLink()) : Promise.reject())
+        .then(() => toast('Link copied 📋'))
+        .catch(() => { try { document.execCommand('copy'); toast('Link copied 📋'); }
+                       catch (e) { toast('Press and hold the link to copy'); } });
+      break;
+    }
+    case 'copycode': {
+      const box = $('#syncCodeBox'); box.select(); box.setSelectionRange(0, 99999);
+      (navigator.clipboard ? navigator.clipboard.writeText(syncCode()) : Promise.reject())
+        .then(() => toast('Code copied 📋'))
+        .catch(() => { try { document.execCommand('copy'); toast('Code copied 📋'); }
+                       catch (e) { toast('Press and hold to select the code'); } });
+      break;
+    }
+    case 'sharesync':
+      if (navigator.share) navigator.share({ title: "Iliana's Habit Garden", url: syncLink() }).catch(() => { });
+      else toast('Copy the link instead 📋');
+      break;
+    case 'syncoff':
+      if (confirm('Stop syncing on this device? Your data stays here.')) {
+        saveSync(null); syncDot('idle'); $('#syncDot').style.display = 'none';
+        closeSheet(); toast('Sync turned off');
+      } break;
 
     case 'recipe': recipeSheet(); Sound.pop(); break;
     case 'hair': {
@@ -2754,7 +3777,7 @@ document.addEventListener('click', e => {
       e.stopPropagation();
       const p = petById(id), s = petState(id);
       if (s.fed === TODAY()) { toast(`${p.name} is full already 🍽️`); Sound.tick(); return; }
-      s.fed = TODAY(); s.aff = Math.min(100, petAff(id) + 14); s.last = TODAY();
+      s.fed = TODAY(); s.aff = Math.min(100, petAff(id) + 14); s.last = TODAY(); s.up = Date.now();
       Sound.critter(p.voice); Sound.chime();
       confetti(x, y, [p.treat, '💗', '✨']); buzz(20);
       toast(`${p.name} loved the ${p.treat} — thank you, ${NAME}!`);
@@ -2798,7 +3821,7 @@ document.addEventListener('click', e => {
     case 'seeds': seedSheet(); break;
     case 'plant': {
       const ty = plantById(t.dataset.type);
-      const p = { id: uid(), type: ty.id, name: ty.name, planted: TODAY(), water: [TODAY()], love: 0 };
+      const p = stamp({ id: uid(), type: ty.id, name: ty.name, planted: TODAY(), water: [TODAY()], love: 0 });
       S.garden.pots.push(p); S.garden.active = p.id;
       const first = !S.garden.seenFirst; S.garden.seenFirst = true;
       save(); closeSheet(); TAB = 'garden'; setTab('garden');
@@ -2817,7 +3840,7 @@ document.addEventListener('click', e => {
     case 'harvest': {
       const p = S.garden.pots.find(p => p.id === id); if (!p) return;
       const ty = plantById(p.type);
-      S.garden.harvested[ty.id] = (S.garden.harvested[ty.id] || 0) + 1;
+      S.garden.harvested[ty.id] = (S.garden.harvested[ty.id] || 0) + 1; tombstone(p.id);
       S.garden.pots = S.garden.pots.filter(x => x.id !== p.id);
       S.garden.active = S.garden.pots[0] ? S.garden.pots[0].id : null;
       save(); rGarden();
@@ -2837,6 +3860,7 @@ document.addEventListener('click', e => {
       draft.unit = $('#gUnit').value.trim();
       draft.due = $('#gDue').value || '';
       const old = draft.steps || [];
+      stamp(draft);
       draft.steps = $$('.gstep').map((inp, i) => ({ t: inp.value.trim(), done: old[i] ? old[i].done : false }))
         .filter(s => s.t);
       const i = S.goals.findIndex(g => g.id === draft.id);
@@ -2845,11 +3869,11 @@ document.addEventListener('click', e => {
       save(); closeSheet(); render(); toast('Saved 💜'); break;
     }
     case 'delgoal':
-      if (confirm('Delete this goal?')) { S.goals = S.goals.filter(g => g.id !== id); save(); closeSheet(); render(); }
+      if (confirm('Delete this goal?')) { tombstone(id); S.goals = S.goals.filter(g => g.id !== id); save(); closeSheet(); render(); }
       break;
     case 'ginc': case 'gdec': {
       const g = S.goals.find(g => g.id === id);
-      g.cur = Math.max(0, g.cur + (a === 'ginc' ? 1 : -1));
+      g.cur = Math.max(0, g.cur + (a === 'ginc' ? 1 : -1)); stamp(g);
       const justDone = !g.done && g.cur >= g.target;
       if (justDone) {
         g.done = true; confetti(x, y, ['🎉', '🏆', '✨', '💜', '🌟']); Sound.chime();
@@ -2860,7 +3884,7 @@ document.addEventListener('click', e => {
     }
     case 'step': {
       const g = S.goals.find(g => g.id === id), s = g.steps[+t.dataset.i];
-      s.done = !s.done; Sound.tick(); buzz();
+      s.done = !s.done; stamp(g); Sound.tick(); buzz();
       if (s.done) confetti(x, y, ['✨', '💜']);
       save(); rGoals(); break;
     }
@@ -2877,7 +3901,7 @@ document.addEventListener('click', e => {
       save(); closeSheet(); render(); Sound.pop(); toast('Note saved 💌'); break;
     }
     case 'delnote':
-      if (confirm('Delete this note?')) { S.notes = S.notes.filter(n => n.id !== id); save(); closeSheet(); render(); }
+      if (confirm('Delete this note?')) { tombstone(id); S.notes = S.notes.filter(n => n.id !== id); save(); closeSheet(); render(); }
       break;
 
     case 'bubu': {
@@ -2887,9 +3911,9 @@ document.addEventListener('click', e => {
       Sound.pop(); confetti(x, y, ['💗', '🧸', '✨']); break;
     }
     case 'settings': settingsSheet(); break;
-    case 'tsound': S.settings.sound = !S.settings.sound; Sound.on = S.settings.sound;
+    case 'tsound': S.settings.sound = !S.settings.sound; Sound.on = S.settings.sound; S.settingsUp = Date.now();
       t.classList.toggle('on', S.settings.sound); if (S.settings.sound) Sound.meow(); save(); break;
-    case 'ttheme': S.settings.theme = theme() === 'twilight' ? 'blossom' : 'twilight';
+    case 'ttheme': S.settings.theme = theme() === 'twilight' ? 'blossom' : 'twilight'; S.settingsUp = Date.now();
       t.classList.toggle('on', S.settings.theme === 'twilight'); applyTheme(); save(); Sound.tick(); break;
     case 'meow': Sound.meow(); confetti(x, y, ['🐱', '🐾', '💗']);
       toast(CAT_LINES[Math.floor(Math.random() * CAT_LINES.length)]); break;
@@ -2916,7 +3940,7 @@ document.addEventListener('click', e => {
 $('#fab').addEventListener('click', e => {
   Sound.pop();
   ({ habits: () => habitEditor(null), goals: () => goalEditor(null),
-     notes: () => noteEditor(null), garden: () => seedSheet(),
+     notes: () => noteEditor(null), garden: () => seedSheet(), stretch: () => routineBuilder(),
      pets: () => rPets(), today: () => habitEditor(null) })[TAB]();
 });
 
@@ -2927,6 +3951,7 @@ function setTab(name) {
   Sound.tick(); buzz(8);
   if (name === 'garden') { spawnBugs(3 + Math.floor(Math.random() * 3)); startBugs(); }
   render();
+  movePill(true);
   $('main').scrollTop = 0;
 }
 $$('.tab').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
@@ -2977,6 +4002,9 @@ function boot() {
   $('#splashCat').innerHTML = catSVG();
   render();
   setTimeout(movePill, 60);
+  loadSync();
+  if (syncCfg) { syncDot('idle'); pullSync(false); }
+  consumeSyncHash();
 }
 boot();
 
@@ -2995,12 +4023,19 @@ function enter() {
 }
 document.addEventListener('pointerdown', enter, { once: true });
 
-/* keep the day fresh if the app stays open past midnight */
+/* keep the day fresh if the app stays open past midnight, and quietly
+   pick up anything the other device did while this one sits open */
 let lastSeenDay = TODAY();
-setInterval(() => { if (TODAY() !== lastSeenDay) { lastSeenDay = TODAY(); render(); } }, 60000);
+setInterval(() => {
+  if (TODAY() !== lastSeenDay) { lastSeenDay = TODAY(); render(); }
+  if (syncCfg && !document.hidden && !PL) pullSync(false);
+}, 60000);
 document.addEventListener('visibilitychange', () => {
-  if (!document.hidden && TODAY() !== lastSeenDay) { lastSeenDay = TODAY(); render(); }
+  if (document.hidden) return;
+  if (TODAY() !== lastSeenDay) { lastSeenDay = TODAY(); render(); }
+  if (syncCfg) pullSync(false);          // pick up anything the other device did
 });
+addEventListener('online', () => { if (syncCfg) pullSync(false); });
 
 </script>
 </body>
